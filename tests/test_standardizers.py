@@ -35,3 +35,33 @@ def test_mean_centralizer():
 
 
 
+def test_standardizer():
+
+    std = Stand_Scaler()
+
+    x = cp.array([
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [3, 6],
+        [3, 6],
+        [3, 6],
+    ])
+
+    std.fit(x)
+
+    x_cen = std.transform(x)
+
+    x_expected = cp.array([
+        [-1, -1],
+        [-1, -1],
+        [-1, -1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+    ])
+
+    np.testing.assert_array_equal(x_cen.get(),x_expected.get())
+
+
+

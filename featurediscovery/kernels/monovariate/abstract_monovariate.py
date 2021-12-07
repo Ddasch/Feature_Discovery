@@ -4,50 +4,35 @@ from typing import Union
 import cupy as cp
 import numpy as np
 
+from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 from featurediscovery.standardizers.standardizers import *
 
-class Abstract_Monovariate_Kernel(ABC):
+class Abstract_Monovariate_Kernel(Abstract_Kernel):
     standardizer = None
     def __init__(self, standardizer:str=None):
-
-        if standardizer is not None and standardizer not in SUPPORTED_STANDARDIZERS:
-            raise Exception('Unsupported standardizer: {}'.format(standardizer))
-
-        if standardizer in ['Dummy', 'dummy', 'none', 'None'] or standardizer is None:
-            self.standardizer = Dummy_Standardizer()
-
-        if standardizer in ['Mean', 'mean']:
-            self.standardizer = Mean_Centralizer()
-
-        if standardizer in ['standard']:
-            self.standardizer = Stand_Scaler()
+        super().__init__(standardizer)
 
 
 
     def fit(self, x: Union[np.ndarray, cp.ndarray]):
+        super().fit(x)
 
-        if len(x.shape) != 2:
-            raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
+        if x.shape[1] > 1:
+            print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
 
         x_std = self.standardizer.fit_and_transform(x)
 
         self._fit(x_std)
 
     def transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
-        if len(x.shape) != 2:
-            raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
+        super().transform(x)
+
+        if x.shape[1] > 1:
+            print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
 
         x_std = self.standardizer.transform(x)
 
         return self._transform(x_std)
-
-    def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
-        if len(x.shape) != 2:
-            raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
-        x_std = self.standardizerfit_and_transform(x)
-
-        self.fit(x_std)
-        return self.transform(x_std)
 
 
     @abstractmethod

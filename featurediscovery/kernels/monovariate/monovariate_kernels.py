@@ -25,3 +25,4 @@ class Quadratic_Kernel(Abstract_Monovariate_Kernel):
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(x)
         return x_ret
+

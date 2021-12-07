@@ -2,7 +2,7 @@ import cupy as cp
 import numpy as np
 import pandas as pd
 
-from featurediscovery.kernels.monovariate.monovariate_kernels import Quadratic_Kernel
+from featurediscovery.kernels.monovariate.monovariate_kernels import *
 
 
 
@@ -32,3 +32,25 @@ def test_quadratic_kernel():
     ])
 
     np.testing.assert_array_equal(x_quad.get(), x_exp.get())
+
+
+
+def test_gaussian_aprox():
+    x = cp.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [4.0],
+        [5.0],
+        [6.0],
+    ])
+
+    kernel = Gaussian_Kernel_Taylor_Aprox(degree=3, sigma=1)
+
+    kernel.fit(x)
+
+    x_quad = kernel.transform(x)
+
+    print('')
+
+    #np.testing.assert_array_equal(x_quad.get(), x_exp.get())

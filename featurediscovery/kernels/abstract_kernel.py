@@ -38,7 +38,7 @@ class Abstract_Kernel(ABC):
 
 
     def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
-        x_std = self.standardizerfit_and_transform(x)
+        x_std = self.standardizer.fit_and_transform(x)
 
         self.fit(x_std)
         return self.transform(x_std)

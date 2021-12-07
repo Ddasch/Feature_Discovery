@@ -5,6 +5,8 @@ import cupy as cp
 import numpy as np
 
 
+SUPPORTED_STANDARDIZERS = ['dummy', 'mean', 'standard']
+
 class Dummy_Standardizer(Abstract_Standardizer):
     
     def _fit(self,x: Union[np.ndarray, cp.ndarray]):

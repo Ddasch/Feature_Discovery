@@ -56,6 +56,9 @@ class Layer():
     activation_kernel:Abstract_Kernel = None
     activation_kernel_backward:Abstract_Kernel = None
     activation_func = None
+    learning_rate = 0.1
+
+
     def __init__(self, input_size:int, layer_size:int, activation_func:str):
 
         self.layer_size = layer_size
@@ -132,16 +135,20 @@ class Layer():
         m = A_prev.shape[1]
 
         #these are for the gradient descent optimizer for this layer
-        dW = np.dot(dZ, self.cache[0].T) / m
+        dW = np.dot(dZ, A_prev.T) / m
         db = np.squeeze(np.sum(dZ, axis=1, keepdims=True)) / m
 
         #this one needs to be passed along for the next layer
-        dA_prev = np.dot(self.cache[1].T, dZ)
+        dA_prev = np.dot(W.T, dZ)
 
 
         assert (dA_prev.shape == A_prev.shape)
         assert (dW.shape == W.shape)
         #assert (isinstance(db, np.float64))
+
+        self.dW = dW
+        self.db = db
+        self.dA_prev = dA_prev
 
         return dA_prev, dW, db
 
@@ -171,6 +178,13 @@ class Layer():
 
         return dA_prev, dW, db
 
+
+    def recompute_weights(self):
+
+        self.W  = self.W - self.dW * self.learning_rate
+        self.b = self.b - self.db * self.learning_rate
+
+
     def sigmoid_backward(self, dA, cache):
         """
         The backward propagation for a single SIGMOID unit.
@@ -185,7 +199,7 @@ class Layer():
         dZ = dA * s * (1-s)
         return dZ
 
-class CostFunction():
+class CrossEntropyCost():
 
     epsilon = 1e-12
 
@@ -214,3 +228,58 @@ class CostFunction():
         assert (cost.shape == ())
 
         return cost
+
+    def loss_backward(self, AL, Y):
+        #source: http://www.adeveloperdiary.com/data-science/deep-learning/neural-network-with-softmax-in-python/
+        return cp.subtract(AL,Y)
+
+
+class SimpleModel():
+
+    activation_func = None
+
+    def __init__(self, activation:str='sigmoid'):
+        self.activation_func = activation
+
+    def fit(self, x:cp.ndarray, y:cp.ndarray):
+        #shape x: [n_sample, n_feature], standard format what you get out of a df
+
+
+        X = x.transpose()
+        Y = y.transpose()
+
+        #shape X: [n_feature, n_sample] as layer expects other way around
+
+        layer =Layer(input_size=X.shape[0], layer_size=1, activation_func=self.activation_func)
+
+        cross_e = CrossEntropyCost()
+
+        for i in range(20):
+            A, full_cache = layer.linear_activation_forward(X)
+
+            cost_val = cross_e.compute_cost(A, Y)
+
+            print('current cost: {}'.format(cost_val))
+
+            dL_A = cross_e.loss_backward(A,Y)
+
+            dA_prev, dW, db = layer.linear_backward(dL_A)
+
+            layer.recompute_weights()
+
+            print('')
+
+        self.layer = layer
+        self.cross_e = cross_e
+
+    def score(self, x:cp.ndarray,):
+        X = x.transpose()
+        A, full_cache = self.layer.linear_activation_forward(X)
+
+        A = A.transpose()
+
+        A_label = A.copy()
+        A_label[A_label>0.5]=1
+        A_label[A_label <=0.5] = 0
+
+        return A_label, A

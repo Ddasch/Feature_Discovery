@@ -97,3 +97,47 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
         x_ret = self.kernel_func(x[:, 0], x[:, 1])
         x_ret = cp.column_stack(x_ret)
         return x_ret
+
+
+
+class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
+    kernel_func = None
+
+    def __init__(self, standardizer):
+        super().__init__(standardizer)
+        self.kernel_func = cp.ElementwiseKernel(
+            'float64 dA, float64 Z',
+            'float64 y',
+            'y = dA * (1 / (1 + np.exp(-Z))) * (1 - (1 / (1 + np.exp(-Z))))',
+            'sigmoid'
+        )
+
+    # 'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]):
+        x_ret = self.kernel_func(x[:, 0], x[:, 1])
+        x_ret = cp.column_stack(x_ret)
+        return x_ret
+
+    def sigmoid_backward(self, dA: Union[np.ndarray, cp.ndarray], Z:Union[np.ndarray, cp.ndarray]):
+        x_ret = self.kernel_func(dA, Z)
+        x_ret = cp.column_stack(x_ret)
+        return x_ret
+
+    '''
+    def _sigmoid_backward(dA, cache):
+        """
+        The backward propagation for a single SIGMOID unit.
+        Arguments:
+        dA - post-activation gradient, of any shape
+        cache - 'Z' where we store for computing backward propagation efficiently
+        Returns:
+        dZ - Gradient of the cost with respect to Z
+        """
+        Z = cache
+        s = 1 / (1 + np.exp(-Z))
+        dZ = dA * s * (1 - s)
+        return dZ
+    '''

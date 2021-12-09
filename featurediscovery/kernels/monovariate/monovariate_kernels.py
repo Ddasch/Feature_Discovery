@@ -120,3 +120,25 @@ class Gaussian_Kernel_Taylor_Aprox(Abstract_Monovariate_Kernel):
         x_ret = self.kernel_func(x, const1)
         return x_ret
 
+
+class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
+
+    kernel_func = None
+
+    def __init__(self, standardizer):
+        super().__init__(standardizer)
+        self.kernel_func = cp.ElementwiseKernel(
+            'float64 x',
+            'float64 y',
+            'y = 1/(1 + exp(-1*x))',
+            'sigmoid'
+        )
+
+
+    #'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]):
+        x_ret = self.kernel_func(x)
+        return x_ret

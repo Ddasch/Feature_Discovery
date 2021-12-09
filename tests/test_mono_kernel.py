@@ -54,3 +54,24 @@ def test_gaussian_aprox():
     print('')
 
     #np.testing.assert_array_equal(x_quad.get(), x_exp.get())
+
+
+
+def test_sigmoid():
+    x = cp.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [0.0],
+        [0.5],
+        [0.75],
+        [-1.]
+    ])
+
+    kernel = Sigmoid_Kernel()
+
+    kernel.fit(x)
+
+    x_quad = kernel.transform(x)
+
+    print('')

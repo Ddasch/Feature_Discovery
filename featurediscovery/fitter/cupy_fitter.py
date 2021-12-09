@@ -71,6 +71,10 @@ class Layer():
         self.b = cp.zeros((layer_size, 1))
 
         self.activation_func = activation_func
+
+        if activation_func not in ['sigmoid']:
+            raise Exception('unsupported activation function')
+
         if activation_func == 'sigmoid':
             self.activation_kernel = Sigmoid_Kernel('dummy')
             self.activation_kernel_backward = Sigmoid_Kernel_Backwards('dummy')
@@ -181,7 +185,7 @@ class Layer():
 
     def recompute_weights(self):
 
-        self.W  = self.W - self.dW * self.learning_rate
+        self.W = self.W - self.dW * self.learning_rate
         self.b = self.b - self.db * self.learning_rate
 
 
@@ -279,7 +283,7 @@ class SimpleModel():
         A = A.transpose()
 
         A_label = A.copy()
-        A_label[A_label>0.5]=1
-        A_label[A_label <=0.5] = 0
+        A_label[A_label > 0.5] = 1
+        A_label[A_label <= 0.5] = 0
 
         return A_label, A

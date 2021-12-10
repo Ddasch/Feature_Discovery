@@ -3,7 +3,10 @@ import cupy as cp
 from tests.nn_test_case2 import *
 
 
-from featurediscovery.fitter.cupy_fitter import Linear_Cupy_SGD, Layer, CrossEntropyCost, SimpleModel
+from featurediscovery.fitter.cupy_fitter import Linear_Cupy_SGD
+from fitter.cupy_nn.models import SimpleModel
+from fitter.cupy_nn.costs import CrossEntropyCost
+from fitter.cupy_nn.layers import Layer
 
 
 def test_layer():

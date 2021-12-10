@@ -4,7 +4,7 @@ from tests.nn_test_case2 import *
 
 
 from featurediscovery.fitter.cupy_fitter import Linear_Cupy_SGD
-from fitter.cupy_nn.models import SimpleModel
+from fitter.cupy_nn.models import SimpleModel, ANN
 from fitter.cupy_nn.costs import CrossEntropyCost
 from fitter.cupy_nn.layers import Layer
 
@@ -109,6 +109,36 @@ def test_simple_fit():
     y = cp.array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]).reshape([-1, 1])
 
     model = SimpleModel()
+
+    model.fit(x,y)
+
+    y_hat, y_hat_prob = model.score(x)
+
+    np.testing.assert_array_equal(y, y_hat)
+
+    print('')
+
+
+
+def test_ANN_fit_single_neuron():
+    x = cp.array([
+        cp.array([1, 2]),
+        cp.array([1, 3]),
+        cp.array([1, 4]),
+        cp.array([2, 3]),
+        cp.array([2, 4]),
+        cp.array([3, 4]),
+        cp.array([2, 1]),
+        cp.array([3, 1]),
+        cp.array([3, 2]),
+        cp.array([4, 1]),
+        cp.array([4, 2]),
+        cp.array([4, 3])
+    ])
+
+    y = cp.array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]).reshape([-1, 1])
+
+    model = ANN(cost='cross-entropy', output_activation='sigmoid', learning_rate=0.1)
 
     model.fit(x,y)
 

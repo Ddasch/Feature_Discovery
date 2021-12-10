@@ -14,10 +14,10 @@ class Layer():
     activation_kernel:Abstract_Kernel = None
     activation_kernel_backward:Abstract_Kernel = None
     activation_func = None
-    learning_rate = 0.1
+    learning_rate = None
 
 
-    def __init__(self, input_size:int, layer_size:int, activation_func:str):
+    def __init__(self, input_size:int, layer_size:int, activation_func:str, learning_rate:float=0.05):
 
         self.layer_size = layer_size
         self.input_size = input_size
@@ -29,6 +29,7 @@ class Layer():
         self.b = cp.zeros((layer_size, 1))
 
         self.activation_func = activation_func
+        self.learning_rate = learning_rate
 
         if activation_func not in ['sigmoid']:
             raise Exception('unsupported activation function')
@@ -131,9 +132,7 @@ class Layer():
         linear_cache, activation_cache = self.full_cache
 
         if self.activation_func == "sigmoid":
-            ### START CODE HERE ### (≈ 2 lines of code)
             dZ = self.sigmoid_backward(dA, activation_cache)
-            ### END CODE HERE ###
 
         # Shorten the code
         dA_prev, dW, db = self.linear_backward(dZ)

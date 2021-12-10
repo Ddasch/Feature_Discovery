@@ -81,7 +81,7 @@ class Layer():
 
         return A, self.full_cache
 
-    def linear_backward(self,dZ):
+    def _linear_backward(self, dZ):
         """
         Implement the linear portion of backward propagation for a single layer (layer l)
 
@@ -135,7 +135,7 @@ class Layer():
             dZ = self.sigmoid_backward(dA, activation_cache)
 
         # Shorten the code
-        dA_prev, dW, db = self.linear_backward(dZ)
+        dA_prev, dW, db = self._linear_backward(dZ)
 
         return dA_prev, dW, db
 

@@ -66,7 +66,7 @@ def test_linear_backwards():
     layer.W = linear_cache[1]
     layer.b = linear_cache[2]
 
-    dA_prev, dW, db = layer.linear_backward(dZ)
+    dA_prev, dW, db = layer._linear_backward(dZ)
     print("dA_prev = " + str(dA_prev))
     print("dW = " + str(dW))
     print("db = " + str(db))

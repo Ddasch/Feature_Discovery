@@ -33,7 +33,7 @@ class SimpleModel():
 
             dL_A = cross_e.loss_backward(A,Y)
 
-            dA_prev, dW, db = layer.linear_backward(dL_A)
+            dA_prev, dW, db = layer.linear_activation_backward(dL_A)
 
             layer.recompute_weights()
 
@@ -178,7 +178,7 @@ class ANN():
 
             #backward pass the gradient
             for layer in reversed(self.layers):
-                dL_A, dW, db = layer.linear_backward(dL_A)
+                dL_A, dW, db = layer.linear_activation_backward(dL_A)
 
                 #recompute the weights
                 layer.recompute_weights()

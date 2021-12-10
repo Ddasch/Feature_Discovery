@@ -33,4 +33,6 @@ class CrossEntropyCost():
 
     def loss_backward(self, AL, Y):
         #source: http://www.adeveloperdiary.com/data-science/deep-learning/neural-network-with-softmax-in-python/
-        return cp.subtract(AL,Y)
+        #return cp.subtract(AL,Y)
+        #NOTE: BAD SOURCE!, incorrect!
+        return - (cp.divide(Y, AL) - cp.divide(1 - Y, 1 - AL))

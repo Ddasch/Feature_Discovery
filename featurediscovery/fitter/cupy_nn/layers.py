@@ -1,5 +1,4 @@
 import cupy as cp
-from numpy import __init__ as np
 
 from kernels.abstract_kernel import Abstract_Kernel
 from kernels.duovariate.duovariate_kernels import Sigmoid_Kernel_Backwards

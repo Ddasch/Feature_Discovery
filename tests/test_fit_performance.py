@@ -1,7 +1,7 @@
 import cupy as cp
 import datetime
 
-from featurediscovery.fitter.cupy_fitter import Logistic_Regression
+from featurediscovery.fitter.cupy_fitter import Logistic_Regression_ANN
 
 from featurediscovery.fitter.sklearn_fitters import Linear_Scikit, Logistic_Scikit
 
@@ -25,13 +25,13 @@ def test_Logistic_Regression_Performance_vs_ridge_tiny():
 
     y = cp.array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]).reshape([-1, 1])
 
-    logistic = Logistic_Regression(fit_metric='gini')
+    logistic = Logistic_Regression_ANN(fit_metric='gini')
     linear = Linear_Scikit(fit_metric='gini')
 
     start_logistic = datetime.datetime.now()
     for i in range(100):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -84,13 +84,13 @@ def test_Logistic_Regression_Performance_vs_ridge_2D_large():
     x = x_big
     y = y_big
 
-    logistic = Logistic_Regression(fit_metric='gini')
+    logistic = Logistic_Regression_ANN(fit_metric='gini')
     linear = Linear_Scikit(fit_metric='gini')
 
     start_logistic = datetime.datetime.now()
     for i in range(1000):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -149,7 +149,7 @@ def test_Logistic_Regression_Performance_vs_ridge_100D_large():
     y = y_big
 
 
-    logistic = Logistic_Regression(fit_metric='gini')
+    logistic = Logistic_Regression_ANN(fit_metric='gini')
     linear = Linear_Scikit(fit_metric='gini')
 
     start_ridge = datetime.datetime.now()
@@ -162,7 +162,7 @@ def test_Logistic_Regression_Performance_vs_ridge_100D_large():
     start_logistic = datetime.datetime.now()
     for i in range(1000):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -225,7 +225,7 @@ def test_Logistic_Regression_Performance_vs_sklogistic_1000D_large():
     start_logistic = datetime.datetime.now()
     for i in range(1000):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -286,7 +286,7 @@ def test_Logistic_Regression_Performance_vs_sklogistic_100D_large():
     start_logistic = datetime.datetime.now()
     for i in range(1000):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -355,7 +355,7 @@ def test_Logistic_Regression_Performance_vs_sklogistic_20D_large():
     start_logistic = datetime.datetime.now()
     for i in range(100):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -431,7 +431,7 @@ def test_Logistic_Regression_Performance_vs_sklogistic_20D_huge():
     start_logistic = datetime.datetime.now()
     for i in range(100):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()
@@ -507,7 +507,7 @@ def test_Logistic_Regression_Performance_vs_sklogistic_20D_extrahuge():
     start_logistic = datetime.datetime.now()
     for i in range(100):
         #print('iteration i={}'.format(i))
-        logistic = Logistic_Regression(fit_metric='gini')
+        logistic = Logistic_Regression_ANN(fit_metric='gini')
         fit_improvement = logistic.compute_fit_improvement(x, y)
         #assert fit_improvement == 0.5
     end_logistic = datetime.datetime.now()

@@ -4,9 +4,9 @@ from typing import Union
 from featurediscovery.fitter.abstract_fitter import Abstract_Fitter
 
 from featurediscovery.fitter.cupy_nn.models import ANN
+from featurediscovery.fitter.cupy_nn.weight_initializer import init_2D_weights
 
-
-class Logistic_Regression(Abstract_Fitter):
+class Logistic_Regression_ANN(Abstract_Fitter):
 
     model:ANN = None
 

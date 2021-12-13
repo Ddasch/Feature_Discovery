@@ -3,7 +3,7 @@ import cupy as cp
 from tests.nn_test_case2 import *
 
 
-from featurediscovery.fitter.cupy_fitter import Logistic_Regression
+from featurediscovery.fitter.cupy_fitter import Logistic_Regression_ANN
 from fitter.cupy_nn.models import SimpleModel, ANN
 from fitter.cupy_nn.costs import CrossEntropyCost
 from fitter.cupy_nn.layers import Layer
@@ -167,7 +167,7 @@ def test_Logistic_Regression_ANN_implementation_fit_improvement():
 
     y = cp.array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]).reshape([-1, 1])
 
-    logistic = Logistic_Regression(fit_metric='gini')
+    logistic = Logistic_Regression_ANN(fit_metric='gini')
 
     fit_improvement = logistic.compute_fit_improvement(x, y)
 

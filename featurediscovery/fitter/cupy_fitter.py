@@ -16,10 +16,11 @@ class Logistic_Regression(Abstract_Fitter):
         self.model = ANN(cost='cross-entropy'
                          , output_activation='sigmoid'
                          , hidden_activations=None
-                         , hidden_layer_sizes=None)
+                         , hidden_layer_sizes=None
+                         , learning_rate=0.2)
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
-        self.model.fit(x,y,n_epoch=20)
+        self.model.fit(x,y,n_epoch=40, cost_improvement_thresh=0.1)
 
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):

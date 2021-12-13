@@ -66,7 +66,7 @@ class ANN():
                  output_activation: str,
                  learning_rate:float=0.05,
                  hidden_layer_sizes: List[int] = None,
-                 hidden_activations: List[str] = None,
+                 hidden_activations: List[str] = None
                  ):
 
         if hidden_layer_sizes is None:
@@ -119,6 +119,7 @@ class ANN():
             print(
                 'WARNING: y with shape {} has more outputs than samples. Expected input shape is [n_outputs, n_samples]. Perhaps it needs to be transposed?'.format(y.shape))
 
+        self.layers = []
 
         #prepare the hidden layers
         for hidden_layer_number in range(len(self._hidden_layer_sizes)):
@@ -157,7 +158,7 @@ class ANN():
 
         self.layers.append(output_layer)
 
-    def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20):
+    def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20, cost_improvement_thresh:float=0.05):
         # shape x: [n_sample, n_feature], standard format what you get out of a df
         X = x.transpose()
         Y = y.transpose()
@@ -165,6 +166,7 @@ class ANN():
         #init all the layers
         self._setup(X,Y)
 
+        last_cost = cp.inf
 
         for epoch in range(n_epoch):
 
@@ -172,6 +174,10 @@ class ANN():
             A = X
             for layer in self.layers:
                 A = layer.linear_activation_forward(A)
+
+            current_cost = self.cost_function.compute_cost(A,Y)
+            if last_cost - current_cost <= cost_improvement_thresh:
+                break
 
             #compute derivative of loss with respect to last activation
             dL_A = self.cost_function.loss_backward(A, Y)

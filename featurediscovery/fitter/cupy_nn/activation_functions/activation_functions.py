@@ -17,14 +17,15 @@ class SigmoidActivation(AbstractActivation):
         self.sigmoid_kernel_backwards = Sigmoid_Kernel_Backwards(standardizer=None)
 
     def activation_forward(self, Z:cp.ndarray):
+        #return 1/(1 + cp.exp(-1*Z))
         return self.sigmoid_kernel.transform(Z, suppres_warning=True)
 
     def activation_backward(self, dA:cp.ndarray, Z:cp.ndarray):
-        '''
-        s = 1 / (1 + cp.exp(-Z))
-        dZ = dA * s * (1 - s)
-        return dZ
-        '''
+
+        #s = 1 / (1 + cp.exp(-Z))
+        #dZ = dA * s * (1 - s)
+        #return dZ
+
         return self.sigmoid_kernel_backwards.sigmoid_backward(dA,Z)
 
     def recompute_weights(self):

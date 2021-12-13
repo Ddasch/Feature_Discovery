@@ -3,7 +3,7 @@ import cupy as cp
 
 from featurediscovery.fitter.cupy_nn.activation_functions.activation_functions import *
 from featurediscovery.fitter.cupy_nn.activation_functions.abstract_activation_function import AbstractActivation
-
+from featurediscovery.fitter.cupy_nn.weight_initializer import init_2D_weights
 
 class Layer():
 
@@ -15,16 +15,16 @@ class Layer():
     learning_rate:float = None
 
 
-    def __init__(self, input_size:int, layer_size:int, activation_func:str, learning_rate:float=0.05):
+    def __init__(self, input_size:int, layer_size:int, activation_func:str
+                 , learning_rate:float=0.05
+                 , weight_initializer:str='glorot'):
 
         self.layer_size = layer_size
         self.input_size = input_size
 
-        self.W = cp.zeros((layer_size, input_size))
+        self.W = init_2D_weights((layer_size, input_size), input_size, weight_initializer)
+        self.b = init_2D_weights((layer_size, 1), input_size, weight_initializer)
 
-        self.W[:,0]=1
-
-        self.b = cp.zeros((layer_size, 1))
         self.learning_rate = learning_rate
 
         if activation_func not in ['sigmoid']:

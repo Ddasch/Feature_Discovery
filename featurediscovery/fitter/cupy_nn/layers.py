@@ -1,20 +1,19 @@
 import cupy as cp
 
-from kernels.abstract_kernel import Abstract_Kernel
-from kernels.duovariate.duovariate_kernels import Sigmoid_Kernel_Backwards
-from kernels.monovariate.monovariate_kernels import Sigmoid_Kernel
+
+from featurediscovery.fitter.cupy_nn.activation_functions.activation_functions import *
+from featurediscovery.fitter.cupy_nn.activation_functions.abstract_activation_function import AbstractActivation
 
 
 class Layer():
 
-    W = None  #shape: [n_neuron, n_input]
-    b = None
-    layer_size = None
-    input_size = None
-    activation_kernel:Abstract_Kernel = None
-    activation_kernel_backward:Abstract_Kernel = None
-    activation_func = None
-    learning_rate = None
+    W:cp.ndarray = None  #shape: [n_neuron, n_input]
+    b:cp.ndarray = None
+    layer_size:int = None
+    input_size:int = None
+    activation_func_obj:AbstractActivation = None
+    activation_func_str:str = None
+    learning_rate:float = None
 
 
     def __init__(self, input_size:int, layer_size:int, activation_func:str, learning_rate:float=0.05):
@@ -28,22 +27,19 @@ class Layer():
 
         self.b = cp.zeros((layer_size, 1))
 
-        self.activation_func = activation_func
+        self.activation_func_str = activation_func
         self.learning_rate = learning_rate
 
         if activation_func not in ['sigmoid']:
             raise Exception('unsupported activation function')
 
         if activation_func == 'sigmoid':
-            self.activation_kernel = Sigmoid_Kernel('dummy')
-            self.activation_kernel_backward = Sigmoid_Kernel_Backwards('dummy')
+            self.activation_func_obj = SigmoidActivation()
 
-    def linear_forward(self, A):
+    def _linear_forward(self, A):
         # forward pass
         Z = cp.dot(self.W, A) + self.b
 
-
-        #self.cache = (A, self.W,  self.b)
         assert (Z.shape == (self.W.shape[0], A.shape[1]))
 
         return Z
@@ -60,11 +56,8 @@ class Layer():
 
         assert A_prev.shape[0] == self.input_size
 
-        Z = self.linear_forward(A_prev)
-
-        if self.activation_func == "sigmoid":
-            A = self.activation_kernel._transform(Z)
-
+        Z = self._linear_forward(A_prev)
+        A = self.activation_func_obj.activation_forward(Z)
 
         assert (A.shape == (self.W.shape[0], A_prev.shape[1]))
 
@@ -118,10 +111,9 @@ class Layer():
         dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
         """
 
-        if self.activation_func == "sigmoid":
-            dZ = self.sigmoid_backward(dA, self.Z_cache)
+        dZ = self.activation_func_obj.activation_backward(dA, self.Z_cache)
 
-        dA_prev= self._linear_backward(dZ)
+        dA_prev = self._linear_backward(dZ)
 
         return dA_prev
 
@@ -130,16 +122,3 @@ class Layer():
 
         self.W = self.W - self.dW * self.learning_rate
         self.b = self.b - self.db * self.learning_rate
-
-
-    def sigmoid_backward(self, dA, Z):
-        """
-        The backward propagation for a single SIGMOID unit.
-        Arguments:
-        dA - post-activation gradient, of any shape
-        Z - the cached Z values that were the input to this sigmoid step during the forward pass
-        dZ - Gradient of the cost with respect to Z
-        """
-        s = 1/(1+cp.exp(-Z))
-        dZ = dA * s * (1-s)
-        return dZ

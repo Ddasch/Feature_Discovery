@@ -24,10 +24,10 @@ class Abstract_Monovariate_Kernel(Abstract_Kernel):
 
         self._fit(x_std)
 
-    def transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
+    def transform(self, x: Union[np.ndarray, cp.ndarray], suppres_warning:bool=False) -> np.ndarray:
         super().transform(x)
 
-        if x.shape[1] > 1:
+        if x.shape[1] > 1 and not suppres_warning:
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
 
         x_std = self.standardizer.transform(x)

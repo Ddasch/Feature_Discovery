@@ -31,13 +31,13 @@ class Abstract_Kernel(ABC):
 
 
     @abstractmethod
-    def transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
+    def transform(self, x: Union[np.ndarray, cp.ndarray]) -> cp.ndarray:
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
 
 
 
-    def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
+    def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> cp.ndarray:
         x_std = self.standardizer.fit_and_transform(x)
 
         self.fit(x_std)

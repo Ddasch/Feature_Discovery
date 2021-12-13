@@ -69,15 +69,15 @@ class Layer():
 
     def _linear_backward(self, dZ):
         """
-        Given derivative of cost w.r.t. the linear output activation, compute the derivative of the cost w.r.t
-        the input activation of this layer. Also computes and caches derivatives of cost w.r.t the weights and biases
+        Given derivative of loss w.r.t. the linear output activation, compute the derivative of the loss w.r.t
+        the input activation of this layer. Also computes and caches derivatives of loss w.r.t the weights and biases
         of this layer for the optimizer to user later
 
         Arguments:
-        dZ -- Gradient of the cost with respect to the linear output
+        dZ -- Gradient of the loss with respect to the linear output
 
         Returns:
-        dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+        dA_prev -- Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
         """
 
         #the amount of samples in the current batch
@@ -101,14 +101,14 @@ class Layer():
 
     def linear_activation_backward(self, dA):
         """
-        Given the derivative of the cost w.r.t. the output activations of this layer (including the activation function),
-        compute derivative of the cost w.r.t the inputs to this layer. Also computes and caches
-        derivatives of cost w.r.t the weights and biases of this layer for the optimizer to user later
+        Given the derivative of the loss w.r.t. the output activations of this layer (including the activation function),
+        compute derivative of the loss w.r.t the inputs to this layer. Also computes and caches
+        derivatives of loss w.r.t the weights and biases of this layer for the optimizer to user later
 
         Arguments:
         dA -- post-activation gradient for current layer l
         Returns:
-        dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+        dA_prev -- Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
         """
         dZ = self.activation_func_obj.activation_backward(dA, self.Z_cache)
         dA_prev = self._linear_backward(dZ)

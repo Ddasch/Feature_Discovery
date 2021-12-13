@@ -26,7 +26,7 @@ def test_linear_ridge():
 
     fit_improvement = linear.compute_fit_improvement(x,y)
 
-
+    assert fit_improvement == 0.5
     print('')
 
 

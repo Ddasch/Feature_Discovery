@@ -97,7 +97,7 @@ class Layer():
         self.db = db
         self.dA_prev = dA_prev
 
-        return dA_prev, dW, db
+        return dA_prev
 
     def linear_activation_backward(self, dA):
         """

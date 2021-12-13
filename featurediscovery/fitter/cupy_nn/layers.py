@@ -12,7 +12,6 @@ class Layer():
     layer_size:int = None
     input_size:int = None
     activation_func_obj:AbstractActivation = None
-    activation_func_str:str = None
     learning_rate:float = None
 
 
@@ -26,8 +25,6 @@ class Layer():
         self.W[:,0]=1
 
         self.b = cp.zeros((layer_size, 1))
-
-        self.activation_func_str = activation_func
         self.learning_rate = learning_rate
 
         if activation_func not in ['sigmoid']:
@@ -110,9 +107,7 @@ class Layer():
         Returns:
         dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
         """
-
         dZ = self.activation_func_obj.activation_backward(dA, self.Z_cache)
-
         dA_prev = self._linear_backward(dZ)
 
         return dA_prev

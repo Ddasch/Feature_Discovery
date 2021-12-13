@@ -108,7 +108,7 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
         self.kernel_func = cp.ElementwiseKernel(
             'float64 dA, float64 Z',
             'float64 y',
-            'y = dA * (1 / (1 + np.exp(-Z))) * (1 - (1 / (1 + np.exp(-Z))))',
+            'y = dA * (1 / (1 + exp(-Z))) * (1 - (1 / (1 + exp(-Z))))',
             'sigmoid'
         )
 
@@ -118,12 +118,10 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(x[:, 0], x[:, 1])
-        x_ret = cp.column_stack(x_ret)
         return x_ret
 
     def sigmoid_backward(self, dA: Union[np.ndarray, cp.ndarray], Z:Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(dA, Z)
-        x_ret = cp.column_stack(x_ret)
         return x_ret
 
     '''

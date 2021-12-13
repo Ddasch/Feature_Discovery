@@ -22,6 +22,9 @@ class Layer():
         self.layer_size = layer_size
         self.input_size = input_size
 
+        if activation_func == 'relu' and weight_initializer != 'he':
+            print('WARNING! When using ReLu as activation one should use "he" as weight initializer as glorot can cause issue with ReLu')
+
         self.W = init_2D_weights((layer_size, input_size), input_size, layer_size, weight_initializer)
         self.b = init_2D_weights((layer_size, 1), input_size, layer_size, weight_initializer)
 

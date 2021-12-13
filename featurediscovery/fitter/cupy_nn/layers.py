@@ -36,11 +36,11 @@ class Layer():
         if activation_func == 'sigmoid':
             self.activation_func_obj = SigmoidActivation()
 
-    def _linear_forward(self, A):
+    def _linear_forward(self, A_prev):
         # forward pass
-        Z = cp.dot(self.W, A) + self.b
+        Z = cp.dot(self.W, A_prev) + self.b
 
-        assert (Z.shape == (self.W.shape[0], A.shape[1]))
+        assert (Z.shape == (self.W.shape[0], A_prev.shape[1]))
 
         return Z
 

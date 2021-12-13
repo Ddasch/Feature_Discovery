@@ -22,8 +22,8 @@ class Layer():
         self.layer_size = layer_size
         self.input_size = input_size
 
-        self.W = init_2D_weights((layer_size, input_size), input_size, weight_initializer)
-        self.b = init_2D_weights((layer_size, 1), input_size, weight_initializer)
+        self.W = init_2D_weights((layer_size, input_size), input_size, layer_size, weight_initializer)
+        self.b = init_2D_weights((layer_size, 1), input_size, layer_size, weight_initializer)
 
         self.learning_rate = learning_rate
 

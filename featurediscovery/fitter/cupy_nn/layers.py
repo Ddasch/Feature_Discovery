@@ -43,10 +43,10 @@ class Layer():
         Z = cp.dot(self.W, A) + self.b
 
 
-        self.cache = (A, self.W,  self.b)
+        #self.cache = (A, self.W,  self.b)
         assert (Z.shape == (self.W.shape[0], A.shape[1]))
 
-        return Z, self.cache
+        return Z
 
 
     def linear_activation_forward(self,A_prev):
@@ -54,12 +54,6 @@ class Layer():
         '''
         Arguments:
         :param A_prev:A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
-        :param W: W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
-        :param b: b -- bias vector, numpy array of shape (size of the current layer, 1)
-        :param activation:  activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
-
-
-
 
         :return:
         A -- the output of the activation function, also called the post-activation value
@@ -70,16 +64,20 @@ class Layer():
         assert A_prev.shape[0] == self.input_size
 
         if self.activation_func == "sigmoid":
-            Z, linear_cache = self.linear_forward(A_prev)
+            Z= self.linear_forward(A_prev)
             A = self.activation_kernel._transform(Z)
 
-            activation_cache = (Z)
+            #activation_cache = (Z)
 
         assert (A.shape == (self.W.shape[0], A_prev.shape[1]))
 
-        self.full_cache = (linear_cache, activation_cache)
+        self.A_prev_cache = A_prev
+        self.Z_cache = Z
+        self.A_cache = A
 
-        return A, self.full_cache
+        #self.full_cache = (linear_cache, activation_cache)
+
+        return A
 
     def _linear_backward(self, dZ):
         """
@@ -94,19 +92,20 @@ class Layer():
         dW -- Gradient of the cost with respect to W (current layer l), same shape as W
         db -- Gradient of the cost with respect to b (current layer l), same shape as b
         """
-        A_prev, W, b = self.cache
-        m = A_prev.shape[1]
+        #A_prev, W, b = self.cache
+
+        m = self.A_prev_cache.shape[1]
 
         #these are for the gradient descent optimizer for this layer
-        dW = cp.dot(dZ, A_prev.T) / m
+        dW = cp.dot(dZ, self.A_prev_cache.T) / m
         db = cp.squeeze(cp.sum(dZ, axis=1, keepdims=True)) / m
 
         #this one needs to be passed along for the next layer
-        dA_prev = cp.dot(W.T, dZ)
+        dA_prev = cp.dot(self.W.T, dZ)
 
 
-        assert (dA_prev.shape == A_prev.shape)
-        assert (dW.shape == W.shape)
+        assert (dA_prev.shape == self.A_prev_cache.shape)
+        assert (dW.shape == self.W.shape)
         #assert (isinstance(db, np.float64))
 
         self.dW = dW
@@ -129,15 +128,15 @@ class Layer():
         dW -- Gradient of the cost with respect to W (current layer l), same shape as W
         db -- Gradient of the cost with respect to b (current layer l), same shape as b
         """
-        linear_cache, activation_cache = self.full_cache
+        #linear_cache, activation_cache = self.full_cache
 
         if self.activation_func == "sigmoid":
-            dZ = self.sigmoid_backward(dA, activation_cache)
+            dZ = self.sigmoid_backward(dA, self.Z_cache)
 
         # Shorten the code
-        dA_prev, dW, db = self._linear_backward(dZ)
+        dA_prev= self._linear_backward(dZ)
 
-        return dA_prev, dW, db
+        return dA_prev
 
 
     def recompute_weights(self):

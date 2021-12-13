@@ -171,14 +171,14 @@ class ANN():
             #forward pass
             A = X
             for layer in self.layers:
-                A, _ = layer.linear_activation_forward(A)
+                A = layer.linear_activation_forward(A)
 
             #compute derivative of loss with respect to last activation
             dL_A = self.cost_function.loss_backward(A, Y)
 
             #backward pass the gradient
             for layer in reversed(self.layers):
-                dL_A, dW, db = layer.linear_activation_backward(dL_A)
+                dL_A = layer.linear_activation_backward(dL_A)
 
                 #recompute the weights
                 layer.recompute_weights()
@@ -189,7 +189,7 @@ class ANN():
         # forward pass
         A = X
         for layer in self.layers:
-            A, _ = layer.linear_activation_forward(A)
+            A = layer.linear_activation_forward(A)
 
         A = A.transpose()
 

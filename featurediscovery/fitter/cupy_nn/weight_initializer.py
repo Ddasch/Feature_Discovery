@@ -13,7 +13,7 @@ def init_2D_weights(shape:tuple, n_input:int, n_output:int, method:str):
         return glorot_2D(shape,n_input)
 
     if method in ['glorot_norm' , 'xavier_norm']:
-        return glorot_2D(shape,n_input)
+        return glorot_norm_2D(shape,n_input, n_output)
 
     if method in ['he']:
         return he_2d(shape, n_input)

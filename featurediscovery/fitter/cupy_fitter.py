@@ -16,10 +16,10 @@ class Logistic_Regression_ANN(Abstract_Fitter):
                          , output_activation='sigmoid'
                          , hidden_activations=None
                          , hidden_layer_sizes=None
-                         , learning_rate=0.2)
+                         , learning_rate=0.05)
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
-        self.model.fit(x,y,n_epoch=40, cost_improvement_thresh=0.1)
+        self.model.fit(x,y,n_epoch=40, cost_improvement_thresh=0.01)
 
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):

@@ -7,6 +7,9 @@ import numpy as np
 from featurediscovery.kernels.duovariate.abstract_duovariate import Abstract_Duovariate_Kernel
 
 
+SUPPORTED_DUOVARIATE_KERNELS = ['difference', 'magnitude', 'poly3', 'poly2']
+
+
 class Difference_Kernel(Abstract_Duovariate_Kernel):
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):

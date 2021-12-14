@@ -24,7 +24,7 @@ def test_linear_ridge():
 
     linear = Linear_Scikit(fit_metric='gini')
 
-    fit_improvement = linear.compute_fit_improvement(x,y)
+    fit_improvement = linear.compute_fit_quality(x, y)
 
     assert fit_improvement == 0.5
     print('')

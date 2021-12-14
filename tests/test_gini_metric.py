@@ -15,9 +15,9 @@ def test_gini():
 
     gini = Gini_Metric()
 
-    gini_good = gini.score_fit_improvement(y,y_hat_good)
-    gini_bad = gini.score_fit_improvement(y,y_had_bad)
-    gini_ok = gini.score_fit_improvement(y,y_hat_ok)
+    gini_good = gini.score_fit_quality(y, y_hat_good)
+    gini_bad = gini.score_fit_quality(y, y_had_bad)
+    gini_ok = gini.score_fit_quality(y, y_hat_ok)
 
     assert gini_good == 0.5
     assert gini_bad == 0.0

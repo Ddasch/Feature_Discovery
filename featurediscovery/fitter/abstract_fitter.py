@@ -21,7 +21,7 @@ class Abstract_Fitter(ABC):
 
 
 
-    def compute_fit_improvement(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
+    def compute_fit_quality(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
 
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
@@ -42,7 +42,7 @@ class Abstract_Fitter(ABC):
                 'Fitter is returning labels not in the original set. Original set is {} but fitter is returning {}'.format(
                     set(cp.unique(y)), set(cp.unique(y_hat))))
 
-        fit_quality = self.fit_metric.score_fit_improvement(y,y_hat)
+        fit_quality = self.fit_metric.score_fit_quality(y, y_hat)
 
         return fit_quality
 

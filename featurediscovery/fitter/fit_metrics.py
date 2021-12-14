@@ -9,8 +9,8 @@ from featurediscovery.fitter.abstract_fit_quality import Fit_Quality_Metric
 
 class Gini_Metric(Fit_Quality_Metric):
 
-    def score_fit_improvement(self, y: Union[np.ndarray, cp.ndarray]
-                              , y_hat: Union[np.ndarray, cp.ndarray]):
+    def score_fit_quality(self, y: Union[np.ndarray, cp.ndarray]
+                          , y_hat: Union[np.ndarray, cp.ndarray]):
 
         pre_fit_gini = gini(y)
 

@@ -10,6 +10,9 @@ import numpy as np
 from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_Monovariate_Kernel
 
 
+SUPPORTED_MONOVARIATE_KERNELS = ['quadratic', 'gaussian_approx', 'sigmoid']
+
+
 class Quadratic_Kernel(Abstract_Monovariate_Kernel):
 
     kernel_func = None

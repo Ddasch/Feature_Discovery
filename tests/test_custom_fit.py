@@ -169,7 +169,7 @@ def test_Logistic_Regression_ANN_implementation_fit_improvement():
 
     logistic = Logistic_Regression_ANN(fit_metric='gini')
 
-    fit_improvement = logistic.compute_fit_improvement(x, y)
+    fit_improvement = logistic.compute_fit_quality(x, y)
 
     assert fit_improvement == 0.5
     print('')

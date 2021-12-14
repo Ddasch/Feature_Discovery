@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 
 import cupy as cp
 import numpy as np
+import pandas as pd
 
 from featurediscovery.standardizers.standardizers import *
 
 class Abstract_Kernel(ABC):
     standardizer = None
+    finalized:bool = False
+
     def __init__(self, standardizer:str=None):
 
         if standardizer is not None and standardizer not in SUPPORTED_STANDARDIZERS:
@@ -52,6 +55,18 @@ class Abstract_Kernel(ABC):
     def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         pass
 
+    @abstractmethod
+    def finalize(self, quality:float, features:List[str]):
+        '''
+        Once kernel quality has been computed, store meta-information about this kernel
+        :param quality: the quality metric for sorting the kernel by quality
+        :param features: feature names so that in the future the kernel can be directly applied on the dataframe
+        :return:
+        '''
+        self.finalized=True
 
+        pass
 
-
+    @abstractmethod
+    def apply(self, df:pd.DataFrame):
+        pass

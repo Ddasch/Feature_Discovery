@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 
 import cupy as cp
 import numpy as np
+import pandas as pd
 
 from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 from featurediscovery.standardizers.standardizers import *
@@ -43,6 +44,15 @@ class Abstract_Duovariate_Kernel(Abstract_Kernel):
     def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         pass
 
+    def finalize(self, quality: float, features: List[str]):
+        super().finalize(quality, features)
 
+        self.kernel_quality = quality
+        self.features = features
 
+    def apply(self, df: pd.DataFrame):
+        if not self.finalized:
+            raise Exception('Attempting to apply kernel that has not been finalized yet')
+
+        # TODO apply kernel and return df
 

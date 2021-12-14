@@ -13,17 +13,37 @@ from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_M
 SUPPORTED_MONOVARIATE_KERNELS = ['quadratic', 'gaussian_approx', 'sigmoid']
 
 
+def get_mono_kernel(name:str):
+    if name not in SUPPORTED_MONOVARIATE_KERNELS:
+        raise Exception('unsupported kernel')
+
+    if name == 'quadratic':
+        return Quadratic_Kernel()
+
+    if name == 'gaussian_approx':
+        return Gaussian_Kernel_Taylor_Aprox()
+
+    if name == 'sigmoid':
+        return Sigmoid_Kernel()
+
+
+
+quadratic_cupy_kernel_singleton = None
+
 class Quadratic_Kernel(Abstract_Monovariate_Kernel):
 
     kernel_func = None
     #'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        self.kernel_func = cp.ElementwiseKernel(
+        global quadratic_cupy_kernel_singleton
+        if quadratic_cupy_kernel_singleton is None:
+            quadratic_cupy_kernel_singleton = cp.ElementwiseKernel(
             'float64 x',
             'float64 y',
             'y = x*x',
             'quadratic'
-        )
+            )
+        self.kernel_func = quadratic_cupy_kernel_singleton
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(x)

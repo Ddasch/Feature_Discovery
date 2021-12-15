@@ -139,7 +139,8 @@ class ANN():
             hidden_layer = Layer(input_size=layer_input_size
                                  , layer_size=self._hidden_layer_sizes[hidden_layer_number]
                                  , activation_func=self._hidden_activations[hidden_layer_number]
-                                 , learning_rate=self.learning_rate)
+                                 , learning_rate=self.learning_rate
+                                 , optimizer='momentum')
 
             self.layers.append(hidden_layer)
 
@@ -157,7 +158,8 @@ class ANN():
         output_layer = Layer(input_size=layer_input_size
                              , layer_size=y.shape[0]
                              , activation_func=self._output_activation
-                             , learning_rate=self.learning_rate)
+                             , learning_rate=self.learning_rate
+                             , optimizer='momentum')
 
         self.layers.append(output_layer)
 

@@ -19,7 +19,7 @@ class Logistic_Regression_ANN(Abstract_Fitter):
                          , learning_rate=0.1)
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
-        self.model.fit(x,y,n_epoch=300, cost_improvement_thresh=0.0001)
+        self.model.fit(x,y,n_epoch=300, cost_improvement_thresh=0.0001, cost_improvement_agg_range=10)
 
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):

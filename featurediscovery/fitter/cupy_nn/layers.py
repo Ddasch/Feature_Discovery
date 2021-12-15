@@ -13,11 +13,12 @@ class Layer():
     input_size:int = None
     activation_func_obj:AbstractActivation = None
     learning_rate:float = None
-
+    optimizer = None
 
     def __init__(self, input_size:int, layer_size:int, activation_func:str
                  , learning_rate:float=0.05
-                 , weight_initializer:str='glorot'):
+                 , weight_initializer:str='glorot'
+                 , optimizer:str = 'momentum'):
 
         self.layer_size = layer_size
         self.input_size = input_size
@@ -32,6 +33,17 @@ class Layer():
 
         if activation_func not in ['sigmoid']:
             raise Exception('unsupported activation function')
+
+        if optimizer not in ['SGD', 'momentum']:
+            raise Exception('unsupported optimizer {}'.format(optimizer))
+
+        self.optimizer = optimizer
+
+        #init extra matrices depening on optimizer
+        if optimizer == 'momentum':
+            self.VdW = cp.zeros(self.W.shape)
+            self.Vdb = cp.zeros(self.b.shape)
+            self.momentum_beta = 0.9
 
         if activation_func == 'sigmoid':
             self.activation_func_obj = SigmoidActivation()
@@ -116,7 +128,15 @@ class Layer():
         return dA_prev
 
 
-    def recompute_weights(self):
+    def recompute_weights(self, method:str='momentum'):
 
-        self.W = self.W - self.dW * self.learning_rate
-        self.b = self.b - self.db * self.learning_rate
+        if method == 'SGD':
+            self.W = self.W - self.dW * self.learning_rate
+            self.b = self.b - self.db * self.learning_rate
+
+        if method == 'momentum':
+            self.VdW = self.momentum_beta * self.VdW + (1 - self.momentum_beta) * self.dW
+            self.Vdb = self.momentum_beta * self.Vdb + (1 - self.momentum_beta) * self.db
+
+            self.W = self.W - self.VdW * self.learning_rate
+            self.b = self.b - self.Vdb * self.learning_rate

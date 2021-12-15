@@ -1,8 +1,10 @@
 import cupy as cp
+from collections import deque
 
 from fitter.cupy_nn.costs import CrossEntropyCost
 from fitter.cupy_nn.layers import Layer
 from typing import List
+
 
 class SimpleModel():
 
@@ -154,11 +156,18 @@ class ANN():
         # create output layer
         output_layer = Layer(input_size=layer_input_size
                              , layer_size=y.shape[0]
-                             , activation_func=self._output_activation)
+                             , activation_func=self._output_activation
+                             , learning_rate=self.learning_rate)
 
         self.layers.append(output_layer)
 
-    def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20, cost_improvement_thresh:float=0.05):
+    def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20
+            , cost_improvement_thresh:float=0.001
+            , cost_improvement_agg_range:int=5):
+
+        if n_epoch is None:
+            n_epoch = 99999999
+
         # shape x: [n_sample, n_feature], standard format what you get out of a df
         X = x.transpose()
         Y = y.transpose()
@@ -166,7 +175,9 @@ class ANN():
         #init all the layers
         self._setup(X,Y)
 
-        last_cost = cp.inf
+        #last_cost = cp.inf
+
+        cost_history = cp.ones((cost_improvement_agg_range))*99999
 
         for epoch in range(n_epoch):
 
@@ -175,9 +186,16 @@ class ANN():
             for layer in self.layers:
                 A = layer.linear_activation_forward(A)
 
+            #check cost criteria for early stopping
             current_cost = self.cost_function.compute_cost(A,Y)
-            if last_cost - current_cost <= cost_improvement_thresh:
-                break
+            cost_history_agg = cp.median(cost_history)
+
+            if cost_improvement_thresh is not None:
+                if cost_history_agg - current_cost <= cost_improvement_thresh:
+                    break
+
+            cost_history[:-1] = cost_history[1:]
+            cost_history[-1] = current_cost
 
             #compute derivative of loss with respect to last activation
             dL_A = self.cost_function.loss_backward(A, Y)
@@ -188,6 +206,9 @@ class ANN():
 
                 #recompute the weights
                 layer.recompute_weights()
+
+
+        pass
 
 
     def score(self, x:cp.ndarray, label_cut_thresh:float=0.5):

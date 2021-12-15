@@ -104,3 +104,45 @@ def test_run_script_full_monovariate_numpy():
 
     assert results is not None
 
+
+
+
+def test_run_script_full_monovariate_compare_numpy_cupy():
+    x = np.array([
+        np.array([-3, 0]),
+        np.array([-2, 1]),
+        np.array([-1, 0]),
+        np.array([0, 1]),
+        np.array([1, 0]),
+        np.array([2, 1]),
+        np.array([3, 0]),
+        np.array([-4, 1]),
+        np.array([4, 0]),
+        np.array([-5, 1]),
+        np.array([5, 0]),
+        np.array([-6, 1]),
+        np.array([6, 0])
+    ])
+
+    y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,1])
+
+    df = pd.DataFrame(data={
+        'x1': x[:, 0],
+        'x2': x[:, 1],
+        'y': y
+    })
+
+    results_cp = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y',
+                                      monovariate_kernels=['quadratic'],
+                                      eval_method='full', use_cupy='yes')
+
+    results_np = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
+                                   eval_method='full', use_cupy='no')
+
+
+
+    assert results_np is not None
+    assert results_cp is not None
+
+    print('')
+

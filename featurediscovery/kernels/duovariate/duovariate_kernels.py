@@ -3,6 +3,7 @@ from typing import Union
 
 import cupy as cp
 import numpy as np
+import pandas as pd
 
 from featurediscovery.kernels.duovariate.abstract_duovariate import Abstract_Duovariate_Kernel
 
@@ -126,6 +127,12 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
     def sigmoid_backward(self, dA: Union[np.ndarray, cp.ndarray], Z:Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(dA, Z)
         return x_ret
+
+    def apply(self, df: pd.DataFrame):
+        raise Exception('not yet implemented')
+
+    def get_kernel_name(self):
+        return 'Sigmoid Backprop'
 
     '''
     def _sigmoid_backward(dA, cache):

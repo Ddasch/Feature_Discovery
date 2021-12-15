@@ -6,9 +6,10 @@ import numpy as np
 import pandas as pd
 
 from featurediscovery.standardizers.standardizers import *
+from featurediscovery.standardizers.abstract_standardizer import Abstract_Standardizer
 
 class Abstract_Kernel(ABC):
-    standardizer = None
+    standardizer:Abstract_Standardizer = None
     finalized:bool = False
 
     def __init__(self, standardizer:str=None):
@@ -69,4 +70,8 @@ class Abstract_Kernel(ABC):
 
     @abstractmethod
     def apply(self, df:pd.DataFrame):
+        pass
+
+    @abstractmethod
+    def get_kernel_name(self) -> str:
         pass

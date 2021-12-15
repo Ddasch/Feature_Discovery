@@ -36,3 +36,7 @@ class Abstract_Standardizer(ABC):
     @abstractmethod
     def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         pass
+
+    @abstractmethod
+    def get_standardizer_name(self) -> str:
+        pass

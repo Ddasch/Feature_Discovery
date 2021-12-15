@@ -49,10 +49,3 @@ class Abstract_Duovariate_Kernel(Abstract_Kernel):
 
         self.kernel_quality = quality
         self.features = features
-
-    def apply(self, df: pd.DataFrame):
-        if not self.finalized:
-            raise Exception('Attempting to apply kernel that has not been finalized yet')
-
-        # TODO apply kernel and return df
-

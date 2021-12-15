@@ -4,7 +4,7 @@ from typing import Union
 
 import cupy as cp
 import numpy as np
-
+import pandas as pd
 
 
 from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_Monovariate_Kernel
@@ -52,6 +52,23 @@ class Quadratic_Kernel(Abstract_Monovariate_Kernel):
         else:
             x_ret = np.multiply(x,x)
         return x_ret
+
+
+    def apply(self, df:pd.DataFrame):
+        if not self.finalized:
+            raise Exception('Attempting to apply kernel that has not been finalized yet')
+
+        X = df[self.features].to_numpy(dtype=np.float64)
+
+        X_square = self.transform(X)
+
+        k_feat_name = self.features[0] + '^2'
+
+        df[k_feat_name] = X_square
+
+        self.kernel_features = [k_feat_name]
+
+        return df
 
 
 
@@ -170,3 +187,18 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
         x_ret = self.kernel_func(x)
         return x_ret
 
+    def apply(self, df:pd.DataFrame):
+        if not self.finalized:
+            raise Exception('Attempting to apply kernel that has not been finalized yet')
+
+        X = df[self.features].to_numpy(dtype=np.float64)
+
+        X_square = self.transform(X)
+
+        k_feat_name = 'sigmoid(' + self.features[0] + ')'
+
+        df[k_feat_name] = X_square
+
+        self.kernel_features = [k_feat_name]
+
+        return df

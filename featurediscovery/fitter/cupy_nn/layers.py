@@ -39,7 +39,7 @@ class Layer():
 
         self.optimizer = optimizer
 
-        #init extra matrices depening on optimizer
+        #init extra matrices depending on optimizer
         if optimizer == 'momentum':
             self.VdW = cp.zeros(self.W.shape)
             self.Vdb = cp.zeros(self.b.shape)

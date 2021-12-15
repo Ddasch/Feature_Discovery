@@ -30,3 +30,5 @@ class SigmoidActivation(AbstractActivation):
 
     def recompute_weights(self):
         pass
+
+

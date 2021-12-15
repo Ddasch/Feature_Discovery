@@ -140,7 +140,7 @@ class ANN():
                                  , layer_size=self._hidden_layer_sizes[hidden_layer_number]
                                  , activation_func=self._hidden_activations[hidden_layer_number]
                                  , learning_rate=self.learning_rate
-                                 , optimizer='momentum')
+                                 , optimizer='adam')
 
             self.layers.append(hidden_layer)
 
@@ -159,7 +159,7 @@ class ANN():
                              , layer_size=y.shape[0]
                              , activation_func=self._output_activation
                              , learning_rate=self.learning_rate
-                             , optimizer='momentum')
+                             , optimizer='adam')
 
         self.layers.append(output_layer)
 
@@ -207,7 +207,7 @@ class ANN():
                 dL_A = layer.linear_activation_backward(dL_A)
 
                 #recompute the weights
-                layer.recompute_weights()
+                layer.recompute_weights(iteration=epoch+1)
 
 
         pass

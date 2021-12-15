@@ -1,5 +1,5 @@
 import cupy as cp
-
+import math
 
 from featurediscovery.fitter.cupy_nn.activation_functions.activation_functions import *
 from featurediscovery.fitter.cupy_nn.activation_functions.abstract_activation_function import AbstractActivation
@@ -34,7 +34,7 @@ class Layer():
         if activation_func not in ['sigmoid']:
             raise Exception('unsupported activation function')
 
-        if optimizer not in ['SGD', 'momentum']:
+        if optimizer not in ['SGD', 'momentum', 'adam']:
             raise Exception('unsupported optimizer {}'.format(optimizer))
 
         self.optimizer = optimizer
@@ -44,6 +44,15 @@ class Layer():
             self.VdW = cp.zeros(self.W.shape)
             self.Vdb = cp.zeros(self.b.shape)
             self.momentum_beta = 0.9
+
+        if optimizer == 'adam':
+            self.VdW = cp.zeros(self.W.shape)
+            self.Vdb = cp.zeros(self.b.shape)
+            self.momentum_beta = 0.9
+            self.SdW = cp.zeros(self.W.shape)
+            self.Sdb = cp.zeros(self.b.shape)
+            self.normalization_beta = 0.999
+            self.epsilon = 0.00000001
 
         if activation_func == 'sigmoid':
             self.activation_func_obj = SigmoidActivation()
@@ -128,15 +137,35 @@ class Layer():
         return dA_prev
 
 
-    def recompute_weights(self, method:str='momentum'):
+    def recompute_weights(self, iteration:int):
 
-        if method == 'SGD':
+        if self.optimizer == 'SGD':
             self.W = self.W - self.dW * self.learning_rate
             self.b = self.b - self.db * self.learning_rate
 
-        if method == 'momentum':
+        if self.optimizer == 'momentum':
             self.VdW = self.momentum_beta * self.VdW + (1 - self.momentum_beta) * self.dW
             self.Vdb = self.momentum_beta * self.Vdb + (1 - self.momentum_beta) * self.db
 
             self.W = self.W - self.VdW * self.learning_rate
             self.b = self.b - self.Vdb * self.learning_rate
+
+        if self.optimizer == 'adam':
+            #momentum weight exp update
+            self.VdW = self.momentum_beta * self.VdW + (1 - self.momentum_beta) * self.dW
+            self.Vdb = self.momentum_beta * self.Vdb + (1 - self.momentum_beta) * self.db
+
+            #RMS prop exp update of squared velocities
+            self.SdW = self.normalization_beta * self.SdW + (1 - self.normalization_beta) * cp.multiply(self.dW,self.dW)
+            self.Sdb = self.normalization_beta * self.Sdb + (1 - self.normalization_beta) * cp.multiply(self.db,self.db)
+
+            #bias correction
+            VdW_corr = self.VdW / (1 - math.pow(self.momentum_beta, iteration))
+            Vdb_corr = self.Vdb / (1 - math.pow(self.momentum_beta, iteration))
+
+            SdW_corr = self.SdW / (1 - math.pow(self.normalization_beta, iteration))
+            Sdb_corr = self.Sdb / (1 - math.pow(self.normalization_beta, iteration))
+
+            #update weights
+            self.W = self.W - self.learning_rate * VdW_corr / (cp.sqrt(SdW_corr) + self.epsilon)
+            self.b = self.b - self.learning_rate * Vdb_corr / (cp.sqrt(Sdb_corr) + self.epsilon)

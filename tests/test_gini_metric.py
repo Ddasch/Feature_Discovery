@@ -1,5 +1,5 @@
 
-from featurediscovery.fitter.fit_metrics import Gini_Metric
+from featurediscovery.fitter.fit_metrics import IG_Gini
 import cupy as cp
 
 
@@ -13,7 +13,7 @@ def test_gini():
     y_had_bad = cp.array([0,1,0,1,0,1,0,1])
     y_hat_ok = cp.array([1,1,1,0,1,1,0,1])
 
-    gini = Gini_Metric()
+    gini = IG_Gini()
 
     gini_good = gini.score_fit_quality(y, y_hat_good)
     gini_bad = gini.score_fit_quality(y, y_had_bad)

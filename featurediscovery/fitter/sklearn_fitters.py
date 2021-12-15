@@ -13,14 +13,20 @@ class Linear_Scikit(Abstract_Fitter):
     model:RidgeClassifier = None
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
+        if type(x) != np.ndarray or type(y) != np.ndarray:
+            raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
+
         ridge = RidgeClassifier()
 
-        ridge.fit(x.get(),y.get())
+        ridge.fit(x,y)
 
         self.model = ridge
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):
-        return cp.array(self.model.predict(x.get()).reshape(-1,1))
+        if type(x) != np.ndarray:
+            raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
+
+        return self.model.predict(x).reshape(-1,1)
 
 
 class Logistic_Scikit(Abstract_Fitter):
@@ -28,11 +34,17 @@ class Logistic_Scikit(Abstract_Fitter):
     model:LogisticRegression = None
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
+        if type(x) != np.ndarray or type(y) != np.ndarray:
+            raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
+
         logistic = LogisticRegression()
 
-        logistic.fit(x.get(),y.get())
+        logistic.fit(x,y)
 
         self.model = logistic
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):
-        return cp.array(self.model.predict(x.get()).reshape(-1,1))
+        if type(x) != np.ndarray:
+            raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
+
+        return self.model.predict(x).reshape(-1,1)

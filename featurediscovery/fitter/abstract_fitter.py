@@ -13,11 +13,11 @@ class Abstract_Fitter(ABC):
 
     def __init__(self, fit_metric:str):
 
-        if fit_metric not in ['gini']:
+        if fit_metric not in ['IG_Gini']:
             raise Exception('unsupported metric {}'.format(fit_metric))
 
-        if fit_metric == 'gini':
-            self.fit_metric = Gini_Metric()
+        if fit_metric == 'IG_Gini':
+            self.fit_metric = IG_Gini()
 
 
 
@@ -33,14 +33,22 @@ class Abstract_Fitter(ABC):
             raise Exception(
                 'y may only contain a single feature')
 
+        use_cupy = type(x) == cp.ndarray
+
         self._fit(x,y)
 
         y_hat = self._score(x)
 
-        if len(set(cp.unique(y_hat).get()).difference(set(cp.unique(y).get()))) > 0:
-            raise Exception(
-                'Fitter is returning labels not in the original set. Original set is {} but fitter is returning {}'.format(
-                    set(cp.unique(y)), set(cp.unique(y_hat))))
+        if use_cupy:
+            if len(set(cp.unique(y_hat).get()).difference(set(cp.unique(y).get()))) > 0:
+                raise Exception(
+                    'Fitter is returning labels not in the original set. Original set is {} but fitter is returning {}'.format(
+                        set(cp.unique(y)), set(cp.unique(y_hat))))
+        else:
+            if len(set(np.unique(y_hat)).difference(set(np.unique(y)))) > 0:
+                raise Exception(
+                    'Fitter is returning labels not in the original set. Original set is {} but fitter is returning {}'.format(
+                        set(np.unique(y)), set(np.unique(y_hat))))
 
         fit_quality = self.fit_metric.score_fit_quality(y, y_hat)
 

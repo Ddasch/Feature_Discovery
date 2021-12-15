@@ -46,7 +46,11 @@ class Quadratic_Kernel(Abstract_Monovariate_Kernel):
         self.kernel_func = quadratic_cupy_kernel_singleton
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x)
+        use_cupy = type(x) == cp.ndarray
+        if use_cupy:
+            x_ret = self.kernel_func(x)
+        else:
+            x_ret = np.multiply(x,x)
         return x_ret
 
 
@@ -148,7 +152,7 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
 
     kernel_func = None
 
-    def __init__(self, standardizer):
+    def __init__(self, standardizer:str=None):
         super().__init__(standardizer)
         self.kernel_func = cp.ElementwiseKernel(
             'float64 x',

@@ -129,7 +129,6 @@ class Layer():
         :return: Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
         '''
 
-
         dZ = self.activation_func_obj.activation_backward(dA, self.Z_cache)
         dA_prev = self._linear_backward(dZ)
 

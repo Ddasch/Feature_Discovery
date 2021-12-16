@@ -1,7 +1,8 @@
 import cupy as cp
 
-from fitter.cupy_nn.costs import CrossEntropyCost
-from fitter.cupy_nn.layers import Layer
+from featurediscovery.fitter.cupy_nn.costs import CrossEntropyCost
+from featurediscovery.fitter.cupy_nn.layers import Layer
+from featurediscovery.util.exceptions import *
 from typing import List
 
 
@@ -62,7 +63,7 @@ class ANN():
     learning_rate = None
     cost_function = None
     better_weight_init_method:str = None
-
+    optimizer: str = None
     def __init__(self,
                  cost:str,
                  output_activation: str,
@@ -70,6 +71,7 @@ class ANN():
                  hidden_layer_sizes: List[int] = None,
                  hidden_activations: List[str] = None,
                  better_weight_init_method:str = None,
+                 optimizer:str='adam'
                  ):
 
         if hidden_layer_sizes is None:
@@ -79,31 +81,36 @@ class ANN():
             hidden_activations = []
 
         if cost not in ['cross-entropy']:
-            raise Exception('unsupported cost function')
+            raise SetupException('unsupported cost function')
 
 
         for a in hidden_activations:
             if a not in ['sigmoid']:
-                raise Exception('Unsupported activation function {}'.format(a))
+                raise SetupException('Unsupported activation function {}'.format(a))
 
         if output_activation not in ['sigmoid']:
-            raise Exception('Unsupported activation function {}'.format(output_activation))
+            raise SetupException('Unsupported activation function {}'.format(output_activation))
 
         if len(hidden_activations) != len(hidden_layer_sizes):
-            raise Exception('hidden layer sizes and activations must be same length')
+            raise SetupException('hidden layer sizes and activations must be same length')
 
         if better_weight_init_method is not None and better_weight_init_method not in ['corr', 'magnified_corr', 'corr_zero_bias', 'magnified_corr_zero_bias']:
-            raise Exception('Unsupported output layer guess method')
+            raise SetupException('Unsupported output layer guess method {}. Must be in [corr, magnified_corr, corr_zero_bias, magnified_corr_zero_bias]'.format(better_weight_init_method))
 
-        if cost in ['cross-entropy']:
-            self.cost_function = CrossEntropyCost()
+        if optimizer not in ['SGD', 'momentum', 'adam']:
+            raise SetupException('Unsupported optimizer {}. must be in [SGD, momentum, adam]'.format(optimizer))
+
+
 
         self._hidden_layer_sizes = hidden_layer_sizes
         self._hidden_activations = hidden_activations
         self.learning_rate = learning_rate
         self._output_activation = output_activation
         self.better_weight_init_method = better_weight_init_method
+        self.optimizer = optimizer
 
+        if cost in ['cross-entropy']:
+            self.cost_function = CrossEntropyCost()
 
         self.layers = []
 
@@ -146,7 +153,7 @@ class ANN():
                                  , layer_size=self._hidden_layer_sizes[hidden_layer_number]
                                  , activation_func=self._hidden_activations[hidden_layer_number]
                                  , learning_rate=self.learning_rate
-                                 , optimizer='adam')
+                                 , optimizer=self.optimizer)
 
             self.layers.append(hidden_layer)
 
@@ -165,9 +172,9 @@ class ANN():
                              , layer_size=Y.shape[0]
                              , activation_func=self._output_activation
                              , learning_rate=self.learning_rate
-                             , optimizer='adam')
+                             , optimizer=self.optimizer)
 
-        if len(self._hidden_layer_sizes) == 0 and self.better_weight_init_method is not None:
+        if is_starting_layer and self.better_weight_init_method is not None:
             #re-initialize weights with better guesses
             output_layer.init_weights_with_data(X_transposed=X_transposed
                                                 , Y_transposed=Y_transposed

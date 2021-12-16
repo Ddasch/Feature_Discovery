@@ -58,6 +58,11 @@ class Layer():
             self.activation_func_obj = SigmoidActivation()
 
     def _linear_forward(self, A_prev):
+        '''
+        Only the linear function of this layer
+        :param A_prev: activations from previous layer (or input data): (size of previous layer, number of examples)
+        :return: Z: the output of the linear function, aka WX+b
+        '''
         # forward pass
         Z = cp.dot(self.W, A_prev) + self.b
 
@@ -68,11 +73,9 @@ class Layer():
 
     def linear_activation_forward(self,A_prev):
         '''
-        Arguments:
-        :param A_prev:A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
-
-        :return:
-        A -- the output of the activation function, aka sigmoid(WX+b)
+        Complete forward activation of this layer
+        :param A_prev: activations from previous layer (or input data): (size of previous layer, number of examples)
+        :return: A: the output of the activation function, aka sigmoid(WX+b)
         '''
 
         assert A_prev.shape[0] == self.input_size
@@ -89,17 +92,14 @@ class Layer():
         return A
 
     def _linear_backward(self, dZ):
-        """
+        '''
         Given derivative of loss w.r.t. the linear output activation, compute the derivative of the loss w.r.t
         the input activation of this layer. Also computes and caches derivatives of loss w.r.t the weights and biases
         of this layer for the optimizer to user later
+        :param dZ: Gradient of the loss with respect to the linear output
+        :return: Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
+        '''
 
-        Arguments:
-        dZ -- Gradient of the loss with respect to the linear output
-
-        Returns:
-        dA_prev -- Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
-        """
 
         #the amount of samples in the current batch
         m = self.A_prev_cache.shape[1]
@@ -121,22 +121,28 @@ class Layer():
         return dA_prev
 
     def linear_activation_backward(self, dA):
-        """
+        '''
         Given the derivative of the loss w.r.t. the output activations of this layer (including the activation function),
         compute derivative of the loss w.r.t the inputs to this layer. Also computes and caches
         derivatives of loss w.r.t the weights and biases of this layer for the optimizer to user later
+        :param dA: post-activation gradient for current layer l
+        :return: Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
+        '''
 
-        Arguments:
-        dA -- post-activation gradient for current layer l
-        Returns:
-        dA_prev -- Gradient of the loss with respect to the activation (of the previous layer l-1), same shape as A_prev
-        """
+
         dZ = self.activation_func_obj.activation_backward(dA, self.Z_cache)
         dA_prev = self._linear_backward(dZ)
 
         return dA_prev
 
     def init_weights_with_data(self, X_transposed, Y_transposed, method:str):
+        '''
+        Make an educated guess of the parameters when doing logistic regression
+        :param X_transposed: dataset of shape [n_samples, n_dims]
+        :param Y_transposed: labels of shape [n_samples, n_outputs]
+        :param method:
+        :return:
+        '''
         if method == 'corr':
             self.W = cross_corr(X_transposed, Y_transposed)
             means_X = cp.mean(X_transposed, axis=0)
@@ -145,7 +151,7 @@ class Layer():
         if method == 'magnified_corr':
             self.W = magnified_cross_corr(X_transposed, Y_transposed)
             means_X = cp.mean(X_transposed, axis=0)
-            self.b = -1*cp.sum(means_X) * cp.ones(self.b.shape)
+            self.b = -1 * cp.sum(means_X) * cp.ones(self.b.shape)
 
         if method == 'corr_zero_bias':
             self.W = cross_corr(X_transposed, Y_transposed)

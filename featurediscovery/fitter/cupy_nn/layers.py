@@ -140,12 +140,12 @@ class Layer():
         if method == 'corr':
             self.W = cross_corr(X_transposed, Y_transposed)
             means_X = cp.mean(X_transposed, axis=0)
-            self.b = -1 * cp.sum(means_X)
+            self.b = -1 * cp.sum(means_X) * cp.ones(self.b.shape)
 
         if method == 'magnified_corr':
             self.W = magnified_cross_corr(X_transposed, Y_transposed)
             means_X = cp.mean(X_transposed, axis=0)
-            self.b = -1*cp.sum(means_X)
+            self.b = -1*cp.sum(means_X) * cp.ones(self.b.shape)
 
         if method == 'corr_zero_bias':
             self.W = cross_corr(X_transposed, Y_transposed)

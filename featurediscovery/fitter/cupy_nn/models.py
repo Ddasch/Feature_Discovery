@@ -7,6 +7,9 @@ from typing import List
 
 
 class SimpleModel():
+    '''
+    DO NOT USE. Everything here is hardcoded for the purpose of developing the underlying logic
+    '''
 
     activation_func = None
 
@@ -37,7 +40,7 @@ class SimpleModel():
 
             dA_prev, dW, db = layer.linear_activation_backward(dL_A)
 
-            layer.recompute_weights()
+            layer.recompute_weights(i)
 
             print('')
 

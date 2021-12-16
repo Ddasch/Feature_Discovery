@@ -1,5 +1,4 @@
 import cupy as cp
-from collections import deque
 
 from fitter.cupy_nn.costs import CrossEntropyCost
 from fitter.cupy_nn.layers import Layer
@@ -62,13 +61,15 @@ class ANN():
     layers = None
     learning_rate = None
     cost_function = None
+    better_weight_init_method:str = None
 
     def __init__(self,
                  cost:str,
                  output_activation: str,
                  learning_rate:float=0.05,
                  hidden_layer_sizes: List[int] = None,
-                 hidden_activations: List[str] = None
+                 hidden_activations: List[str] = None,
+                 better_weight_init_method:str = None,
                  ):
 
         if hidden_layer_sizes is None:
@@ -91,6 +92,8 @@ class ANN():
         if len(hidden_activations) != len(hidden_layer_sizes):
             raise Exception('hidden layer sizes and activations must be same length')
 
+        if better_weight_init_method is not None and better_weight_init_method not in ['corr', 'magnified_corr', 'corr_zero_bias', 'magnified_corr_zero_bias']:
+            raise Exception('Unsupported output layer guess method')
 
         if cost in ['cross-entropy']:
             self.cost_function = CrossEntropyCost()
@@ -99,17 +102,20 @@ class ANN():
         self._hidden_activations = hidden_activations
         self.learning_rate = learning_rate
         self._output_activation = output_activation
+        self.better_weight_init_method = better_weight_init_method
 
 
         self.layers = []
 
 
 
-    def _setup(self, X:cp.ndarray,y:cp.ndarray):
+    def _setup(self, X:cp.ndarray, Y:cp.ndarray, X_transposed:cp.ndarray, Y_transposed:cp.ndarray):
         '''
         Setup all the layers given the config and input/output space
         :param X: shape: [n_input_features, n_samples]
-        :param y: shape: [n_outputs, n_samples]
+        :param Y: shape: [n_outputs, n_samples]
+        :param X_transposed: shape: [n_samples, n_input_features]
+        :param Y_transposed: shape: [n_samples, n_outputs]
         :return:
         '''
 
@@ -117,9 +123,9 @@ class ANN():
             print(
                 'WARNING: X with shape {} has more features than samples. Expected input shape is [n_input_features, n_samples]. Perhaps it needs to be transposed?'.format(X.shape))
 
-        if y.shape[0] > y.shape[1]:
+        if Y.shape[0] > Y.shape[1]:
             print(
-                'WARNING: y with shape {} has more outputs than samples. Expected input shape is [n_outputs, n_samples]. Perhaps it needs to be transposed?'.format(y.shape))
+                'WARNING: y with shape {} has more outputs than samples. Expected input shape is [n_outputs, n_samples]. Perhaps it needs to be transposed?'.format(Y.shape))
 
         self.layers = []
 
@@ -156,16 +162,23 @@ class ANN():
 
         # create output layer
         output_layer = Layer(input_size=layer_input_size
-                             , layer_size=y.shape[0]
+                             , layer_size=Y.shape[0]
                              , activation_func=self._output_activation
                              , learning_rate=self.learning_rate
                              , optimizer='adam')
+
+        if len(self._hidden_layer_sizes) == 0 and self.better_weight_init_method is not None:
+            #re-initialize weights with better guesses
+            output_layer.init_weights_with_data(X_transposed=X_transposed
+                                                , Y_transposed=Y_transposed
+                                                , method=self.better_weight_init_method)
 
         self.layers.append(output_layer)
 
     def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20
             , cost_improvement_thresh:float=0.001
-            , cost_improvement_agg_range:int=5):
+            , cost_improvement_agg_range:int=5
+            , verbose:bool=False):
 
         if n_epoch is None:
             n_epoch = 99999999
@@ -175,7 +188,7 @@ class ANN():
         Y = y.transpose()
 
         #init all the layers
-        self._setup(X,Y)
+        self._setup(X,Y, x,y)
 
         #last_cost = cp.inf
 
@@ -191,6 +204,9 @@ class ANN():
             #check cost criteria for early stopping
             current_cost = self.cost_function.compute_cost(A,Y)
             cost_history_agg = cp.median(cost_history)
+
+            if verbose:
+                print('Cost at epoch {} : {}'.format(epoch, current_cost))
 
             if cost_improvement_thresh is not None:
                 if cost_history_agg - current_cost <= cost_improvement_thresh:
@@ -210,7 +226,7 @@ class ANN():
                 layer.recompute_weights(iteration=epoch+1)
 
 
-        pass
+        self._n_performed_epochs = epoch
 
 
     def score(self, x:cp.ndarray, label_cut_thresh:float=0.5):

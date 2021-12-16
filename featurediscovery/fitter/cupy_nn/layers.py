@@ -3,7 +3,7 @@ import math
 
 from featurediscovery.fitter.cupy_nn.activation_functions.activation_functions import *
 from featurediscovery.fitter.cupy_nn.activation_functions.abstract_activation_function import AbstractActivation
-from featurediscovery.fitter.cupy_nn.weight_initializer import init_2D_weights
+from featurediscovery.fitter.cupy_nn.weight_initializer import init_2D_weights, cross_covariance, cross_corr, magnified_cross_corr
 
 class Layer():
 
@@ -136,6 +136,26 @@ class Layer():
 
         return dA_prev
 
+    def init_weights_with_data(self, X_transposed, Y_transposed, method:str):
+        if method == 'corr':
+            self.W = cross_corr(X_transposed, Y_transposed)
+            means_X = cp.mean(X_transposed, axis=0)
+            self.b = -1 * cp.sum(means_X)
+
+        if method == 'magnified_corr':
+            self.W = magnified_cross_corr(X_transposed, Y_transposed)
+            means_X = cp.mean(X_transposed, axis=0)
+            self.b = -1*cp.sum(means_X)
+
+        if method == 'corr_zero_bias':
+            self.W = cross_corr(X_transposed, Y_transposed)
+            self.b = self.b * 0
+
+        if method == 'magnified_corr_zero_bias':
+            self.W = magnified_cross_corr(X_transposed, Y_transposed)
+            self.b = self.b * 0
+
+        pass
 
     def recompute_weights(self, iteration:int):
 

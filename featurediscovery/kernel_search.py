@@ -70,7 +70,7 @@ def search(df:pd.DataFrame
 
     for duo in duovariate_kernels:
         if duo not in SUPPORTED_DUOVARIATE_KERNELS:
-            raise SetupException('Listed monovariate kernel {} not supported. Supported kernels are: {}'.format(duovariate_kernels, SUPPORTED_DUOVARIATE_KERNELS))
+            raise SetupException('Listed duovariate kernel {} not supported. Supported kernels are: {}'.format(duovariate_kernels, SUPPORTED_DUOVARIATE_KERNELS))
 
     #check that eval method correctly specified
     if eval_method not in ['full', 'naive']:

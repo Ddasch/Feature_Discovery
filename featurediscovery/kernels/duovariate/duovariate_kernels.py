@@ -156,8 +156,10 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
                 'float64 dA, float64 Z',
                 'float64 y',
                 'y = dA * (1 / (1 + exp(-Z))) * (1 - (1 / (1 + exp(-Z))))',
-                'sigmoid-backprop'
+                'sigmoidbackprop'
             )
+
+        self.kernel_func = sigmoid_kernel_backward_singleton
 
     # 'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):

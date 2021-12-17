@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
-from featurediscovery.standardizers.standardizers import *
 
 
 class Abstract_Duovariate_Kernel(Abstract_Kernel):

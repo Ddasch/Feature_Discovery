@@ -220,3 +220,121 @@ def test_naive_duovariate_cupy():
     assert results[0].kernel_quality > 0.3
     assert results[1].kernel_quality > 0.3
     assert results[2].kernel_quality < 0.05
+
+
+
+
+def test_naive_duovariate_numpy():
+    x = np.array([
+        np.array([-3, 0,1]),
+        np.array([-2, 1,2]),
+        np.array([-1, 0,3]),
+        np.array([0, 1,1]),
+        np.array([1, 0,2]),
+        np.array([2, 1,3]),
+        np.array([3, 0,1]),
+        np.array([-4, 1,2]),
+        np.array([4, 0,3]),
+        np.array([-5, 1,1]),
+        np.array([5, 0,2]),
+        np.array([-6, 1,3]),
+        np.array([6, 0,1])
+    ])
+
+    y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+    df = pd.DataFrame(data={
+        'x1': x[:, 0],
+        'x2': x[:, 1],
+        'x3': x[:,2],
+        'y': y
+    })
+
+
+    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                   duovariate_kernels=['poly2'],
+                                   eval_method='naive', use_cupy='no')
+
+    assert results is not None
+    assert len(results) == 3
+    assert results[0].kernel_quality > 0.3
+    assert results[1].kernel_quality > 0.3
+    assert results[2].kernel_quality < 0.05
+
+
+
+def test_full_duovariate_cupy():
+    x = np.array([
+        np.array([-3, 0, 1]),
+        np.array([-2, 1, 2]),
+        np.array([-1, 0, 3]),
+        np.array([0, 1, 1]),
+        np.array([1, 0, 2]),
+        np.array([2, 1, 3]),
+        np.array([3, 0, 1]),
+        np.array([-4, 1, 2]),
+        np.array([4, 0, 3]),
+        np.array([-5, 1, 1]),
+        np.array([5, 0, 2]),
+        np.array([-6, 1, 3]),
+        np.array([6, 0, 1])
+    ])
+
+    y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+    df = pd.DataFrame(data={
+        'x1': x[:, 0],
+        'x2': x[:, 1],
+        'x3': x[:, 2],
+        'y': y
+    })
+
+
+    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                   duovariate_kernels=['poly2'],
+                                   eval_method='full', use_cupy='yes')
+
+    assert results is not None
+    assert len(results) == 3
+    assert results[0].kernel_quality > 0.3
+    assert results[1].kernel_quality > 0.3
+    assert results[2].kernel_quality < 0.05
+
+
+
+def test_full_duovariate_numpy():
+    x = np.array([
+        np.array([-3, 0, 1]),
+        np.array([-2, 1, 2]),
+        np.array([-1, 0, 3]),
+        np.array([0, 1, 1]),
+        np.array([1, 0, 2]),
+        np.array([2, 1, 3]),
+        np.array([3, 0, 1]),
+        np.array([-4, 1, 2]),
+        np.array([4, 0, 3]),
+        np.array([-5, 1, 1]),
+        np.array([5, 0, 2]),
+        np.array([-6, 1, 3]),
+        np.array([6, 0, 1])
+    ])
+
+    y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+    df = pd.DataFrame(data={
+        'x1': x[:, 0],
+        'x2': x[:, 1],
+        'x3': x[:, 2],
+        'y': y
+    })
+
+
+    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                   duovariate_kernels=['poly2'],
+                                   eval_method='full', use_cupy='no')
+
+    assert results is not None
+    assert len(results) == 3
+    assert results[0].kernel_quality > 0.3
+    assert results[1].kernel_quality > 0.3
+    assert results[2].kernel_quality < 0.05

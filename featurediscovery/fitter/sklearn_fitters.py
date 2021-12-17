@@ -18,7 +18,7 @@ class Linear_Scikit(Abstract_Fitter):
 
         ridge = RidgeClassifier()
 
-        ridge.fit(x,y)
+        ridge.fit(x,y.reshape(-1))
 
         self.model = ridge
 
@@ -39,7 +39,7 @@ class Logistic_Scikit(Abstract_Fitter):
 
         logistic = LogisticRegression()
 
-        logistic.fit(x,y)
+        logistic.fit(x,y.reshape(-1))
 
         self.model = logistic
 

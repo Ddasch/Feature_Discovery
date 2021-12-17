@@ -47,5 +47,8 @@ class Abstract_Duovariate_Kernel(Abstract_Kernel):
     def finalize(self, quality: float, features: List[str]):
         super().finalize(quality, features)
 
+        if len(features) != 2:
+            raise Exception('Duovariate kernel requires exactly 2 feature names. Only the following names were provided {}'.format(features))
+
         self.kernel_quality = quality
         self.features = features

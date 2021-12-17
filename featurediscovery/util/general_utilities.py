@@ -13,12 +13,14 @@ def create_duovariate_combination_dicts(mandatory_features:List[str]
 
     for feat_index_a in range(len(feature_space)):
         for feat_index_b in range(feat_index_a + 1 ,len(feature_space)):
+
+            if mandatory_features is not None:
+                if feature_space[feat_index_a] not in mandatory_features \
+                        and feature_space[feat_index_b] not in mandatory_features:
+                    continue
+
             for kernel_str in kernels:
                 for standardizer_str in standardizer:
-
-                    if mandatory_features is not None:
-                        if feature_space[feat_index_a] not in mandatory_features and feature_space[feat_index_b] not in mandatory_features:
-                            continue
 
                     all_dicts.append({
                         'feature_a': feature_space[feat_index_a],

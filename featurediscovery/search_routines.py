@@ -53,9 +53,9 @@ def full_duovariate(df:pd.DataFrame
                       , feature_space:List[str]
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
     if use_cupy:
-        return None
+        return _full_duovariate_cupy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     else:
-        return None
+        return _full_duovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
 
 #################
 ## MONOVARIATE ##
@@ -314,6 +314,102 @@ def _naive_duovariate_numpy(df:pd.DataFrame
         kernel.finalize(fit_quality, [kernel_dict['feature_a']])
 
         # append to list
+        all_kernels.append(kernel)
+
+    return all_kernels
+
+
+
+def _full_duovariate_cupy(df:pd.DataFrame
+                      , search_dicts:List[dict]
+                      , target_variable:str
+                      , feature_space:List[str]
+                      , quality_metric: str = 'IG_Gini') -> List[Abstract_Kernel]:
+    X = df[feature_space].to_numpy(dtype=np.float64)
+    Y = df[target_variable].to_numpy(dtype=np.float64).reshape((-1,1))
+
+    X = cp.array(X)
+    Y = cp.array(Y)
+
+    feature_name_2_index = {}
+    for i in range(len(feature_space)):
+        feature_name_2_index[feature_space[i]] = i
+
+    all_kernels = []
+
+    #compute separability prior kernel extension
+    fitter = Logistic_Regression_ANN(quality_metric)
+    fit_quality_pre_kernel = fitter.compute_fit_quality(X, Y)
+
+    for kernel_dict in search_dicts:
+        #slice X so that it only has the feature for the input kernel
+        feature_index_a = feature_name_2_index[kernel_dict['feature_a']]
+        feature_index_b = feature_name_2_index[kernel_dict['feature_b']]
+        X_slice = X[:, [feature_index_a, feature_index_b]]
+
+        #apply the kernel function to the selected feature
+        kernel = get_duo_kernel(kernel_dict['kernel'])
+        X_kernel = kernel.fit_and_transform(X_slice)
+
+        X_stacked = cp.column_stack((X, X_kernel))
+
+        #evaluate naive fit quality
+        fitter = Logistic_Regression_ANN(quality_metric)
+        fit_quality = fitter.compute_fit_quality(X_stacked,Y)
+
+        fit_improvement = fit_quality - fit_quality_pre_kernel
+
+        #finalize result in kernel
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']])
+
+        #append to list
+        all_kernels.append(kernel)
+
+    return all_kernels
+
+
+
+
+def _full_duovariate_numpy(df:pd.DataFrame
+                      , search_dicts:List[dict]
+                      , target_variable:str
+                      , feature_space:List[str]
+                      , quality_metric: str = 'IG_Gini') -> List[Abstract_Kernel]:
+    X = df[feature_space].to_numpy(dtype=np.float64)
+    Y = df[target_variable].to_numpy(dtype=np.float64).reshape((-1,1))
+
+    feature_name_2_index = {}
+    for i in range(len(feature_space)):
+        feature_name_2_index[feature_space[i]] = i
+
+    all_kernels = []
+
+    #compute separability prior kernel extension
+    fitter = Logistic_Scikit(quality_metric)
+    fit_quality_pre_kernel = fitter.compute_fit_quality(X, Y)
+
+    for kernel_dict in search_dicts:
+        #slice X so that it only has the feature for the input kernel
+        feature_index_a = feature_name_2_index[kernel_dict['feature_a']]
+        feature_index_b = feature_name_2_index[kernel_dict['feature_b']]
+        X_slice = X[:, [feature_index_a, feature_index_b]]
+
+        #apply the kernel function to the selected feature
+        kernel = get_duo_kernel(kernel_dict['kernel'])
+        X_kernel = kernel.fit_and_transform(X_slice)
+
+        X_stacked = np.column_stack((X, X_kernel))
+
+        #evaluate naive fit quality
+        fitter = Logistic_Scikit(quality_metric)
+        fit_quality = fitter.compute_fit_quality(X_stacked,Y)
+
+        fit_improvement = fit_quality - fit_quality_pre_kernel
+
+        #finalize result in kernel
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']])
+
+        #append to list
         all_kernels.append(kernel)
 
     return all_kernels

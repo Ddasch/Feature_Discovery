@@ -131,7 +131,7 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
             x_ret = cp.column_stack(x_ret)
             return x_ret
         else:
-            return self.poly.fit_transform(x)
+            return self.poly.fit_transform(x)[:,3:]
 
 
     def apply(self, df:pd.DataFrame):

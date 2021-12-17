@@ -5,7 +5,24 @@ import cupy as cp
 import numpy as np
 
 
-SUPPORTED_STANDARDIZERS = ['dummy', 'mean', 'standard']
+SUPPORTED_STANDARDIZERS = ['dummy', 'mean', 'standard', 'raw']
+
+
+def get_scaler(scaler_name:str) -> Abstract_Standardizer:
+
+    if scaler_name is not None and scaler_name not in SUPPORTED_STANDARDIZERS:
+        raise Exception('Unsupported standardizer: {}'.format(scaler_name))
+
+    if scaler_name in ['Dummy', 'dummy', 'none', 'None', 'raw'] or scaler_name is None:
+        return Dummy_Standardizer()
+
+    if scaler_name in ['Mean', 'mean']:
+        return Mean_Centralizer()
+
+    if scaler_name in ['standard']:
+        return Stand_Scaler()
+
+
 
 class Dummy_Standardizer(Abstract_Standardizer):
     

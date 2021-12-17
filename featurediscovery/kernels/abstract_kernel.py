@@ -5,7 +5,7 @@ import cupy as cp
 import numpy as np
 import pandas as pd
 
-from featurediscovery.standardizers.standardizers import *
+from featurediscovery.standardizers.standardizers import get_scaler
 from featurediscovery.standardizers.abstract_standardizer import Abstract_Standardizer
 
 
@@ -17,18 +17,8 @@ class Abstract_Kernel(ABC):
     features:List[str] = None
 
     def __init__(self, standardizer:str=None):
+        self.standardizer = get_scaler(standardizer)
 
-        if standardizer is not None and standardizer not in SUPPORTED_STANDARDIZERS:
-            raise Exception('Unsupported standardizer: {}'.format(standardizer))
-
-        if standardizer in ['Dummy', 'dummy', 'none', 'None'] or standardizer is None:
-            self.standardizer = Dummy_Standardizer()
-
-        if standardizer in ['Mean', 'mean']:
-            self.standardizer = Mean_Centralizer()
-
-        if standardizer in ['standard']:
-            self.standardizer = Stand_Scaler()
 
     def fit(self, x: Union[np.ndarray, cp.ndarray]):
 

@@ -11,6 +11,7 @@ from featurediscovery.standardizers.abstract_standardizer import Abstract_Standa
 class Abstract_Kernel(ABC):
     standardizer:Abstract_Standardizer = None
     finalized:bool = False
+    kernel_quality:float = None
 
     def __init__(self, standardizer:str=None):
 

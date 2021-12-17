@@ -146,3 +146,38 @@ def test_run_script_full_monovariate_compare_numpy_cupy():
 
     print('')
 
+
+
+def test_naive_monovariate_numpy():
+    x = np.array([
+        np.array([-3, 0]),
+        np.array([-2, 1]),
+        np.array([-1, 0]),
+        np.array([0, 1]),
+        np.array([1, 0]),
+        np.array([2, 1]),
+        np.array([3, 0]),
+        np.array([-4, 1]),
+        np.array([4, 0]),
+        np.array([-5, 1]),
+        np.array([5, 0]),
+        np.array([-6, 1]),
+        np.array([6, 0])
+    ])
+
+    y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+    df = pd.DataFrame(data={
+        'x1': x[:, 0],
+        'x2': x[:, 1],
+        'y': y
+    })
+
+
+    results = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y',
+                                   monovariate_kernels=['quadratic'],
+                                   eval_method='naive', use_cupy='no')
+
+    assert results is not None
+    assert results[0].kernel_quality > 0.4
+    assert results[1].kernel_quality < 0.05

@@ -82,9 +82,38 @@ def _naive_monovariate_cupy(df:pd.DataFrame
 def _naive_monovariate_numpy(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
-                      , feature_space:List[str]) -> List[Abstract_Kernel]:
+                      , feature_space:List[str]
+                      , quality_metric: str = 'IG_Gini') -> List[Abstract_Kernel]:
+    X = df[feature_space].to_numpy(dtype=np.float64)
+    Y = df[target_variable].to_numpy(dtype=np.float64).reshape((-1, 1))
 
-    pass
+
+    feature_name_2_index = {}
+    for i in range(len(feature_space)):
+        feature_name_2_index[feature_space[i]] = i
+
+    all_kernels = []
+
+    for kernel_dict in search_dicts:
+        # slice X so that it only has the feature for the input kernel
+        feature_index = feature_name_2_index[kernel_dict['feature_a']]
+        X_slice = X[:, [feature_index]]
+
+        # apply the kernel function to the selected feature
+        kernel = get_mono_kernel(kernel_dict['kernel'])
+        X_kernel = kernel.fit_and_transform(X_slice)
+
+        # evaluate naive fit quality
+        fitter = Logistic_Scikit(quality_metric)
+        fit_quality = fitter.compute_fit_quality(X_kernel, Y)
+
+        # finalize result in kernel
+        kernel.finalize(fit_quality, [kernel_dict['feature_a']])
+
+        # append to list
+        all_kernels.append(kernel)
+
+    return all_kernels
 
 
 def _full_monovariate_cupy(df:pd.DataFrame

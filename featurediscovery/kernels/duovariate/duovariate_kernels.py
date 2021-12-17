@@ -6,9 +6,27 @@ import numpy as np
 import pandas as pd
 
 from featurediscovery.kernels.duovariate.abstract_duovariate import Abstract_Duovariate_Kernel
+from sklearn.preprocessing import PolynomialFeatures
 
 
 SUPPORTED_DUOVARIATE_KERNELS = ['difference', 'magnitude', 'poly3', 'poly2']
+
+
+def get_duo_kernel(kernel_name:str) -> Abstract_Duovariate_Kernel:
+    if kernel_name not in SUPPORTED_DUOVARIATE_KERNELS:
+        raise Exception('Unknown kernel {}. Supported kernels are {}'.format(kernel_name, SUPPORTED_DUOVARIATE_KERNELS))
+
+    if kernel_name == 'poly2':
+        return Polynomial_Second_Order_Kernel()
+
+    if kernel_name == 'poly3':
+        return Polynomial_Third_Order_Kernel()
+
+    if kernel_name == 'difference':
+        return Difference_Kernel()
+
+    if kernel_name == 'magnitude':
+        return Magnitude_Kernel()
 
 
 class Difference_Kernel(Abstract_Duovariate_Kernel):
@@ -83,25 +101,44 @@ class Polynomial_Third_Order_Kernel(Abstract_Duovariate_Kernel):
         return x_ret
 
 
+polynomial_2_singleton = None
 class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
 
     kernel_func = None
-
+    poly:PolynomialFeatures = None
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        self.kernel_func = cp.ElementwiseKernel(
-            'float64 x1, float64 x2',
-            'float64 y1, float64 y2, float64 y3',
-            'y1 = x1*x1, y2=2*x1*x2, y3=x2*x2',
-            'poly_second'
-        )
+        use_cupy = type(x) == cp.ndarray
+        if use_cupy:
+            global polynomial_2_singleton
+            if polynomial_2_singleton is None:
+                polynomial_2_singleton = cp.ElementwiseKernel(
+                    'float64 x1, float64 x2',
+                    'float64 y1, float64 y2, float64 y3',
+                    'y1 = x1*x1, y2=2*x1*x2, y3=x2*x2',
+                    'poly_second'
+                )
+
+            self.kernel_func = polynomial_2_singleton
+        else:
+            self.poly = PolynomialFeatures(2)
 
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x[:, 0], x[:, 1])
-        x_ret = cp.column_stack(x_ret)
-        return x_ret
+        use_cupy = type(x) == cp.ndarray
+        if use_cupy:
+            x_ret = self.kernel_func(x[:, 0], x[:, 1])
+            x_ret = cp.column_stack(x_ret)
+            return x_ret
+        else:
+            return self.poly.fit_transform(x)
 
+
+    def apply(self, df:pd.DataFrame):
+        return None
+
+    def get_kernel_name(self) -> str:
+        return 'Polynomial2'
 
 
 class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):

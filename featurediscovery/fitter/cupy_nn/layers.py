@@ -51,7 +51,7 @@ class Layer():
             self.momentum_beta = 0.9
             self.SdW = cp.zeros(self.W.shape)
             self.Sdb = cp.zeros(self.b.shape)
-            self.normalization_beta = 0.999
+            self.normalization_beta = 0.5
             self.epsilon = 0.00000001
 
         if activation_func == 'sigmoid':

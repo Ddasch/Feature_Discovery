@@ -9,7 +9,7 @@ from featurediscovery.kernels.monovariate.monovariate_kernels import SUPPORTED_M
 from featurediscovery.kernels.duovariate.duovariate_kernels import SUPPORTED_DUOVARIATE_KERNELS
 from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
-from featurediscovery.search_routines import naive_monovariate, full_monovariate
+from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
 
 def search(df:pd.DataFrame
            , target_variable:str
@@ -100,17 +100,15 @@ def search(df:pd.DataFrame
     features_to_try = feature_space
     if mandatory_features is not None:
         features_to_try = mandatory_features
-    mono_kernel_dicts = general_utilities._generate_all_list_combinations(kernel=monovariate_kernels, feature_a=features_to_try)
+    mono_kernel_dicts = general_utilities._generate_all_list_combinations(kernel=monovariate_kernels
+                                                                          , feature_a=features_to_try
+                                                                          , standardizer=['raw'])
 
     #generate list of duovariate kernels to try
-    first_feature = feature_space
-    if mandatory_features is not None:
-        first_feature = mandatory_features
-    second_feature = feature_space
-    duo_kernel_dicts = general_utilities._generate_all_list_combinations(kernel=duovariate_kernels
-                                                                         , feature_a=first_feature
-                                                                         , feature_b=second_feature)
-    duo_kernel_dicts = [d for d in duo_kernel_dicts if d['feature_a'] != d['feature_b']]
+    duo_kernel_dicts = general_utilities.create_duovariate_combination_dicts(mandatory_features=mandatory_features
+                                                                             , feature_space=feature_space
+                                                                             , kernels=duovariate_kernels
+                                                                             , standardizer=['raw'])
 
 
     all_kernels = []
@@ -125,7 +123,16 @@ def search(df:pd.DataFrame
         for kernel in mono_results:
             all_kernels.append(kernel)
 
-    #TODO duovariate kernels
+    if len(duo_kernel_dicts) > 0:
+        if eval_method == 'naive':
+            duo_results = naive_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
+                                             , target_variable=target_variable, use_cupy=use_cupy)
+        else:
+            duo_results = full_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
+                                           , target_variable=target_variable, use_cupy=use_cupy)
+
+        for kernel in duo_results:
+            all_kernels.append(kernel)
 
     return all_kernels
 

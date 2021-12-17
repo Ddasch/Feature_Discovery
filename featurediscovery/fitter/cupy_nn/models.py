@@ -228,6 +228,10 @@ class ANN():
             #compute derivative of loss with respect to last activation
             dL_A = self.cost_function.loss_backward(A, Y)
 
+            #abort backprop if derivatives have a nan
+            if cp.isnan(cp.sum(dL_A)):
+                break
+
             #backward pass the gradient
             for layer in reversed(self.layers):
                 dL_A = layer.linear_activation_backward(dL_A)

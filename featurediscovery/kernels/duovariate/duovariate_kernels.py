@@ -125,8 +125,8 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
 
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        use_cupy = type(x) == cp.ndarray
-        if use_cupy:
+
+        if self.api == 'cupy':
             x_ret = self.kernel_func(x[:, 0], x[:, 1])
             x_ret = cp.column_stack(x_ret)
             return x_ret
@@ -134,42 +134,52 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
             return self.poly.fit_transform(x)[:,3:]
 
 
-    def apply(self, df:pd.DataFrame):
-        return None
+    def get_kernel_feature_names(self):
+        return ['{}^2'.format(self.features[0])
+            , '{}*{}'.format(self.features[0], self.features[1])
+            , '{}^2'.format(self.features[1])]
+
 
     def get_kernel_name(self) -> str:
-        return 'Polynomial2'
+        return 'Polynomial2 {x1} {x2} {std}'.format(x1=self.features[0], x2=self.features[1],std=self.standardizer.get_standardizer_name())
 
 
+sigmoid_kernel_backward_singleton = None
 class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
     kernel_func = None
 
     def __init__(self, standardizer):
         super().__init__(standardizer)
-        self.kernel_func = cp.ElementwiseKernel(
-            'float64 dA, float64 Z',
-            'float64 y',
-            'y = dA * (1 / (1 + exp(-Z))) * (1 - (1 / (1 + exp(-Z))))',
-            'sigmoid'
-        )
+        global sigmoid_kernel_backward_singleton
+        if sigmoid_kernel_backward_singleton is None:
+            sigmoid_kernel_backward_singleton = cp.ElementwiseKernel(
+                'float64 dA, float64 Z',
+                'float64 y',
+                'y = dA * (1 / (1 + exp(-Z))) * (1 - (1 / (1 + exp(-Z))))',
+                'sigmoid-backprop'
+            )
 
     # 'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
         pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x[:, 0], x[:, 1])
-        return x_ret
+        if self.api == 'cupy':
+            x_ret = self.kernel_func(x[:, 0], x[:, 1])
+            return x_ret
+        if self.api == 'numpy':
+            raise Exception('not yet implemented')
 
     def sigmoid_backward(self, dA: Union[np.ndarray, cp.ndarray], Z:Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(dA, Z)
         return x_ret
 
-    def apply(self, df: pd.DataFrame):
-        raise Exception('not yet implemented')
 
     def get_kernel_name(self):
-        return 'Sigmoid Backprop'
+        return 'Sigmoid Backprop dA={} Z={}'.format(self.features[0], self.features[1])
+
+    def get_kernel_feature_names(self):
+        return ['dA_prev']
 
     '''
     def _sigmoid_backward(dA, cache):

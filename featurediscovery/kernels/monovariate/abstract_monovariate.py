@@ -9,47 +9,18 @@ from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 from featurediscovery.standardizers.standardizers import *
 
 class Abstract_Monovariate_Kernel(Abstract_Kernel):
-    standardizer = None
-    def __init__(self, standardizer:str=None):
-        super().__init__(standardizer)
-
-
 
     def fit(self, x: Union[np.ndarray, cp.ndarray]):
-        super().fit(x)
-
         if x.shape[1] > 1:
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
-
-        x_std = self.standardizer.fit_and_transform(x)
-
-        self._fit(x_std)
+        super().fit(x)
 
     def transform(self, x: Union[np.ndarray, cp.ndarray], suppres_warning:bool=False) -> np.ndarray:
-        super().transform(x)
-
         if x.shape[1] > 1 and not suppres_warning:
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
-
-        x_std = self.standardizer.transform(x)
-
-        return self._transform(x_std)
+        return super().transform(x)
 
 
-    @abstractmethod
-    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        pass
-
-    @abstractmethod
-    def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
-        pass
-
-    def finalize(self, quality:float, features:List[str]):
-        super().finalize(quality,features)
-
-        self.kernel_quality = quality
-        self.features = features
-        self.kernel_features = None
 
 
 

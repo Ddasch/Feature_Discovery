@@ -16,18 +16,22 @@ class Abstract_Standardizer(ABC):
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
         self._fit(x)
 
-    def transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
+    def transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
         return self._transform(x)
 
-    def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> np.ndarray:
+    def fit_and_transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
 
         self.fit(x)
         return self.transform(x)
 
+    def inverse_transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
+        if len(x.shape) != 2:
+            raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
+        return self._inverse_transform(x)
 
     @abstractmethod
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
@@ -40,3 +44,8 @@ class Abstract_Standardizer(ABC):
     @abstractmethod
     def get_standardizer_name(self) -> str:
         pass
+
+    @abstractmethod
+    def _inverse_transform(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
+

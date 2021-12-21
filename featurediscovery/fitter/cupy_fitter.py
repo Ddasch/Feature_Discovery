@@ -26,6 +26,6 @@ class Logistic_Regression_ANN(Abstract_Fitter):
     def _score(self, x: Union[np.ndarray, cp.ndarray]):
         return self.model.score(x)[0]
 
-
-
+    def _score_prob(self, x: Union[np.ndarray, cp.ndarray]):
+        return self.model.score(x)[1]
 

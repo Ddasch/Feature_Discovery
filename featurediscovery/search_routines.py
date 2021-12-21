@@ -93,8 +93,12 @@ def _naive_monovariate_cupy(df:pd.DataFrame
         fitter = Logistic_Regression_ANN(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_kernel,Y)
 
-        #finalize result in kernel
-        kernel.finalize(fit_quality, [kernel_dict['feature_a']])
+        # estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_kernel)
+
+        # finalize result in kernel
+        kernel.finalize(fit_quality, [kernel_dict['feature_a']]
+                        , x_decision_boundary, y_decision_boundary)
 
         #append to list
         all_kernels.append(kernel)
@@ -133,8 +137,12 @@ def _naive_monovariate_numpy(df:pd.DataFrame
         fitter = Logistic_Scikit(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_kernel, Y)
 
+        # estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_kernel)
+
         # finalize result in kernel
-        kernel.finalize(fit_quality, [kernel_dict['feature_a']])
+        kernel.finalize(fit_quality, [kernel_dict['feature_a']]
+                        , x_decision_boundary, y_decision_boundary)
 
         # append to list
         all_kernels.append(kernel)
@@ -174,14 +182,18 @@ def _full_monovariate_cupy(df:pd.DataFrame
 
         X_stacked = cp.column_stack((X, X_kernel))
 
-        #evaluate naive fit quality
+        #evaluate full fit quality
         fitter = Logistic_Regression_ANN(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_stacked,Y)
 
         fit_improvement = fit_quality - fit_quality_pre_kernel
 
-        #finalize result in kernel
-        kernel.finalize(fit_improvement, [kernel_dict['feature_a']])
+        # estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_stacked)
+
+        # finalize result in kernel
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a']]
+                        , x_decision_boundary, y_decision_boundary)
 
         #append to list
         all_kernels.append(kernel)
@@ -220,14 +232,18 @@ def _full_monovariate_numpy(df:pd.DataFrame
 
         X_stacked = np.column_stack((X, X_kernel))
 
-        #evaluate naive fit quality
+        #evaluate full fit quality
         fitter = Logistic_Scikit(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_stacked,Y)
 
         fit_improvement = fit_quality - fit_quality_pre_kernel
 
-        #finalize result in kernel
-        kernel.finalize(fit_improvement, [kernel_dict['feature_a']])
+        # estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_stacked)
+
+        # finalize result in kernel
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a']]
+                        , x_decision_boundary, y_decision_boundary)
 
         #append to list
         all_kernels.append(kernel)
@@ -353,14 +369,18 @@ def _full_duovariate_cupy(df:pd.DataFrame
 
         X_stacked = cp.column_stack((X, X_kernel))
 
-        #evaluate naive fit quality
+        #evaluate full fit quality
         fitter = Logistic_Regression_ANN(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_stacked,Y)
 
         fit_improvement = fit_quality - fit_quality_pre_kernel
 
-        #finalize result in kernel
-        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']])
+        # estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_stacked)
+
+        # finalize result in kernel
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']]
+                        , x_decision_boundary, y_decision_boundary)
 
         #append to list
         all_kernels.append(kernel)
@@ -400,14 +420,18 @@ def _full_duovariate_numpy(df:pd.DataFrame
 
         X_stacked = np.column_stack((X, X_kernel))
 
-        #evaluate naive fit quality
+        #evaluate full fit quality
         fitter = Logistic_Scikit(quality_metric)
         fit_quality = fitter.compute_fit_quality(X_stacked,Y)
 
         fit_improvement = fit_quality - fit_quality_pre_kernel
 
+        #estimate decision boundary
+        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_stacked)
+
         #finalize result in kernel
-        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']])
+        kernel.finalize(fit_improvement, [kernel_dict['feature_a'], kernel_dict['feature_b']]
+                        , x_decision_boundary, y_decision_boundary)
 
         #append to list
         all_kernels.append(kernel)

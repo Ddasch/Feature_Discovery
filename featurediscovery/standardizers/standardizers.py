@@ -36,6 +36,9 @@ class Dummy_Standardizer(Abstract_Standardizer):
     def get_standardizer_name(self):
         return 'raw'
 
+    def _inverse_transform(self, x: Union[np.ndarray, cp.ndarray]):
+        return x.copy()
+
 class Mean_Centralizer(Abstract_Standardizer):
 
     means = None
@@ -50,6 +53,11 @@ class Mean_Centralizer(Abstract_Standardizer):
 
     def get_standardizer_name(self):
         return 'centralized'
+
+    def _inverse_transform(self, x: Union[np.ndarray, cp.ndarray]):
+        x_ret = x.copy()
+        x_ret = x_ret + self.means
+        return x_ret
 
 class Stand_Scaler(Abstract_Standardizer):
 
@@ -68,3 +76,9 @@ class Stand_Scaler(Abstract_Standardizer):
 
     def get_standardizer_name(self):
         return 'std-scaled'
+
+    def _inverse_transform(self, x: Union[np.ndarray, cp.ndarray]):
+        x_ret = x.copy()
+        x_ret = x_ret * self.stds
+        x_ret = x_ret + self.means
+        return x_ret

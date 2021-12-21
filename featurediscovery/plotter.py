@@ -84,6 +84,10 @@ def _plot_scree_2D(df, kernel:Abstract_Monovariate_Kernel, label_col:str
     for input_feature in kernel.features:
         for kernel_feature in kernel.get_kernel_feature_names():
             _plot_scree_on_ax_2D(ax_list[ax_index], df_with_kernel, input_feature, kernel_feature, label_col)
+
+            if kernel.x_decision_boundary is not None:
+                _plot_boundary_on_ax_2D(ax_list[ax_index], input_feature, kernel_feature, kernel)
+
             ax_index = ax_index + 1
 
     fig.suptitle('Kernel {} with Performance {}'.format(kernel.get_kernel_name(), kernel.kernel_quality))
@@ -99,7 +103,7 @@ def _plot_scree_3D(df, kernel:Abstract_Duovariate_Kernel, label_col:str
                    ):
     df_with_kernel = kernel.apply(df)
 
-    amount_of_plots = len(kernel.get_kernel_feature_names()) 
+    amount_of_plots = len(kernel.get_kernel_feature_names())
 
     amount_of_plot_cols = int(np.round(np.sqrt(amount_of_plots)))
     amount_of_plot_rows = int(np.ceil(np.sqrt(amount_of_plots)))
@@ -123,6 +127,9 @@ def _plot_scree_3D(df, kernel:Abstract_Duovariate_Kernel, label_col:str
 
     for kernel_feature_out in kernel.get_kernel_feature_names():
         _plot_scree_on_ax_3D(ax_list[ax_index], df_with_kernel, kernel.features[0], kernel.features[1],kernel_feature_out, label_col)
+        if kernel.x_decision_boundary is not None:
+            _plot_boundary_on_ax_3D(ax_list[ax_index], kernel.features[0], kernel.features[1],kernel_feature_out, kernel)
+
         ax_index = ax_index + 1
 
     fig.suptitle('Kernel {} with Performance {}'.format(kernel.get_kernel_name(), kernel.kernel_quality))
@@ -162,8 +169,6 @@ def _plot_tsne(df:pd.DataFrame, kernel:Abstract_Kernel
 
 
 def _plot_scree_on_ax_2D(ax:plt.Axes, df, feature_x1, feature_x2, label_col):
-
-
     x1 = df[feature_x1].values.reshape(-1)
     x2 = df[feature_x2].values.reshape(-1)
 
@@ -187,6 +192,34 @@ def _plot_scree_on_ax_3D(ax:plt.Axes, df, feature_x1, feature_x2, feature_x3, la
     ax.set_title('{x1} vs {x2} vs {x3}'.format(x1=feature_x1, x2=feature_x2, x3=feature_x3))
 
 
+def _plot_boundary_on_ax_2D(ax:plt.Axes, feature_x1, feature_x2, kernel:Abstract_Kernel):
+
+    x_decision = kernel.get_decision_boundary([feature_x1,feature_x2])
+
+    x1 = x_decision[:,0]
+    x2 = x_decision[:,1]
+
+    if type(x1) != np.ndarray:
+        x1 = x1.get()
+        x2 = x2.get()
+
+    ax.scatter(x1, x2, marker='.', color='red')
+
+
+def _plot_boundary_on_ax_3D(ax:plt.Axes, feature_x1, feature_x2, feature_x3, kernel:Abstract_Kernel):
+
+    x_decision = kernel.get_decision_boundary([feature_x1,feature_x2, feature_x3])
+
+    x1 = x_decision[:,0]
+    x2 = x_decision[:,1]
+    x3 = x_decision[:,1]
+
+    if type(x1) != np.ndarray:
+        x1 = x1.get()
+        x2 = x2.get()
+        x3 = x3.get()
+
+    ax.scatter3D(x1, x2,x3, marker='.', color='red')
 
 
 def _finalize_plot(kernel:Abstract_Kernel

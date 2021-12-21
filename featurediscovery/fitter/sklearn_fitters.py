@@ -48,3 +48,7 @@ class Logistic_Scikit(Abstract_Fitter):
             raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
 
         return self.model.predict(x).reshape(-1,1)
+
+    def _score_prob(self, x: Union[np.ndarray, cp.ndarray]):
+        probas = self.model.predict_proba(x)
+        return probas[:,1].reshape(-1,1)

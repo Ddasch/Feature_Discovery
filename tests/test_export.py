@@ -167,12 +167,12 @@ def test_to_screen_individual_Duovariate_scree():
 
 
     kernel_search.evaluate_kernels(df
-                                   , feature_space=['x1', 'x2', 'x3']
+                                   , feature_space=['x1', 'x2']
                                    , target_variable='y'
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
                                    , eval_method='full'
-                                   , use_cupy='yes'
+                                   , use_cupy='no'
                                    , plot_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='scree'

@@ -21,7 +21,7 @@ class Abstract_Fitter(ABC):
 
 
 
-    def compute_fit_quality(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
+    def compute_fit_quality(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]) -> float:
 
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
@@ -55,10 +55,71 @@ class Abstract_Fitter(ABC):
         return fit_quality
 
 
+    def compute_decision_boundary_samples(self, x: Union[np.ndarray, cp.ndarray]):
+        # perform a grid-score and extract all the points which are near the decision boundary
+
+        #use_cupy = type(x) == cp.ndarray
+        api = np
+        if type(x) == cp.ndarray:
+            api = cp
+
+        x_mins = x.min(axis=0)
+        x_maxs = x.max(axis=0)
+        n_dims = len(x_mins)
+
+        n_boundary_samples = 5
+        min_decision_samples = 1000
+        # tolerance range of [0.5-tolerance, 0.5+tolerance] of scores considered to be close enough to decision boundary
+        y_prob_tolerance = 0.01
+
+        enough_decision_boundary_points = False
+
+        while not enough_decision_boundary_points:
+            linspaces = []
+            '''
+            if use_cupy:
+                for d_index in range(n_dims):
+                    linspaces.append(cp.linspace(x_mins[d_index], x_maxs[d_index], n_boundary_samples))
+                x_linspace = cp.array(cp.meshgrid(*linspaces)).T.reshape(-1, n_dims)
+    
+            if not use_cupy:
+                for d_index in range(n_dims):
+                    linspaces.append(np.linspace(x_mins[d_index], x_maxs[d_index], n_boundary_samples))
+                x_linspace = np.array(np.meshgrid(*linspaces)).T.reshape(-1, n_dims)
+            '''
+            for d_index in range(n_dims):
+                linspaces.append(api.linspace(x_mins[d_index], x_maxs[d_index], n_boundary_samples))
+            x_linspace = api.array(api.meshgrid(*linspaces)).T.reshape(-1, n_dims)
+
+            y_hat_probs = self._score_prob(x_linspace)
+
+            y_hat_decision_mask = (y_hat_probs > 0.5 - y_prob_tolerance) & (y_hat_probs < 0.5 + y_prob_tolerance)
+            y_hat_decision_mask_samples = [x for x in range(x_linspace.shape[0]) if y_hat_decision_mask[x][0]]
+            y_hat_decision_boundary = y_hat_probs[y_hat_decision_mask]
+
+            if len(y_hat_decision_boundary) >= min_decision_samples:
+                enough_decision_boundary_points = True
+            else:
+                n_boundary_samples = int(n_boundary_samples * 1.5)
+                continue
+
+            # if use_cupy:
+            #    y_hat_decision_mask_2d = cp.ones((n_dims), dtype=bool) * y_hat_decision_mask
+            # else:
+            #    y_hat_decision_mask_2d = np.ones((n_dims), dtype=bool) * y_hat_decision_mask
+
+        x_decision_boundary = x_linspace[y_hat_decision_mask_samples, :].copy()
+
+        return x_decision_boundary, y_hat_decision_boundary
+
     @abstractmethod
     def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
         pass
 
     @abstractmethod
     def _score(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
+
+    @abstractmethod
+    def _score_prob(self, x: Union[np.ndarray, cp.ndarray]):
         pass

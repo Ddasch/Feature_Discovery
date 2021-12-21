@@ -15,6 +15,8 @@ class Abstract_Kernel(ABC):
     kernel_quality:float = None
     api:str = None
     features:List[str] = None
+    x_decision_boundary: Union[np.ndarray, cp.ndarray] = None
+    y_decision_boundary: Union[np.ndarray, cp.ndarray] = None
 
     def __init__(self, standardizer:str=None):
         self.standardizer = get_scaler(standardizer)
@@ -55,16 +57,38 @@ class Abstract_Kernel(ABC):
     def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         pass
 
-    def finalize(self, quality:float, features:List[str]):
+    def finalize(self, quality:float, features:List[str], x_decision_boundary: Union[np.ndarray, cp.ndarray]
+                 , y_decision_boundary: Union[np.ndarray, cp.ndarray]):
         '''
         Once kernel quality has been computed, store meta-information about this kernel
         :param quality: the quality metric for sorting the kernel by quality
         :param features: feature names so that in the future the kernel can be directly applied on the dataframe
+        :param x_decision_boundary
+        :param y_decision_boundary
         :return:
         '''
         self.finalized = True
         self.kernel_quality = quality
         self.features = features
+        self.x_decision_boundary = self.standardizer.inverse_transform(x_decision_boundary)
+        self.y_decision_boundary = y_decision_boundary
+
+    def get_decision_boundary(self, feature_names:List[str]):
+
+        if not self.finalized:
+            raise Exception('kernel not finalized yet')
+
+        x_indexi = []
+        for f in feature_names:
+            if f in self.features:
+                x_indexi.append(self.features.index(f))
+                continue
+
+            if f in self.get_kernel_feature_names():
+                x_indexi.append(self.get_kernel_feature_names().index(f))
+
+        return self.x_decision_boundary[:,x_indexi]
+
 
     def apply(self, df:pd.DataFrame):
 

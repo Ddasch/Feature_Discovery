@@ -22,11 +22,12 @@ class Abstract_Duovariate_Kernel(Abstract_Kernel):
 
         return super().transform(x)
 
-    def finalize(self, quality: float, features: List[str]):
+    def finalize(self, quality: float, features: List[str], x_decision_boundary: Union[np.ndarray, cp.ndarray]
+                 , y_decision_boundary: Union[np.ndarray, cp.ndarray]):
         if len(features) != 2:
             raise Exception('Duovariate kernel requires exactly 2 feature names. Only the following names were provided {}'.format(features))
 
-        super().finalize(quality, features)
+        super().finalize(quality, features, x_decision_boundary, y_decision_boundary)
 
 
 

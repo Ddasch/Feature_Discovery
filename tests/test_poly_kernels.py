@@ -36,9 +36,9 @@ def test_full_duovariate_numpy_apply():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
-                                   duovariate_kernels=['poly2'],
-                                   eval_method='full', use_cupy='no')
+    results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                    duovariate_kernels=['poly2'],
+                                    eval_method='full', use_cupy='no')
 
     df_kernel = results[0].apply(df)
 

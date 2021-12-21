@@ -10,16 +10,17 @@ from featurediscovery.kernels.duovariate.duovariate_kernels import SUPPORTED_DUO
 from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
 from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
+from featurediscovery.plotter import plot_kernel
 
-def search(df:pd.DataFrame
-           , target_variable:str
-           , feature_space:List[str]
-           , eval_method:str = 'full'
-           , mandatory_features:List[str] = None
-           , monovariate_kernels: List[str] = None
-           , duovariate_kernels: List[str] = None
-           , use_cupy:str = 'auto'
-           ) -> List[Abstract_Kernel]:
+def _search(df:pd.DataFrame
+            , target_variable:str
+            , feature_space:List[str]
+            , eval_method:str = 'full'
+            , mandatory_features:List[str] = None
+            , monovariate_kernels: List[str] = None
+            , duovariate_kernels: List[str] = None
+            , use_cupy:str = 'auto'
+            ) -> List[Abstract_Kernel]:
 
     #check df columns
     if type(target_variable) != str:
@@ -135,6 +136,45 @@ def search(df:pd.DataFrame
             all_kernels.append(kernel)
 
     return all_kernels
+
+
+
+
+def evaluate_kernels(df:pd.DataFrame
+            , target_variable:str
+            , feature_space:List[str]
+            , eval_method:str = 'full'
+            , mandatory_features:List[str] = None
+            , monovariate_kernels: List[str] = None
+            , duovariate_kernels: List[str] = None
+            , use_cupy:str = 'auto'
+            , plot_ranking:bool=True
+            , plot_individual_kernels:bool=False
+            , export_folder:str = None
+            , export_ranking:bool = True
+            , export_formats:List[str] = None
+            , export_individual_kernel_plots:bool = False
+         ) -> List[Abstract_Kernel]:
+
+
+    kernel_list = _search(df=df
+                          , target_variable=target_variable
+                          , feature_space=feature_space
+                          , eval_method=eval_method
+                          , mandatory_features=mandatory_features
+                          , monovariate_kernels=monovariate_kernels
+                          , duovariate_kernels=duovariate_kernels
+                          , use_cupy=use_cupy)
+
+
+    kernel_list.sort(key=lambda x: x.kernel_quality, reverse=True)
+
+    if plot_individual_kernels or export_individual_kernel_plots:
+        for k in kernel_list:
+            plot_kernel(df=df, kernel=k, target_variable=target_variable, mode='scree'
+                        , to_screen=plot_individual_kernels
+                        , to_file=export_individual_kernel_plots
+                        , export_folder=export_folder)
 
 
 

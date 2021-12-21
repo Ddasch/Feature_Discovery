@@ -35,8 +35,8 @@ def test_run_script_execution():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
-                                   eval_method='naive', use_cupy='yes')
+    results = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
+                                    eval_method='naive', use_cupy='yes')
 
     assert results is not None
 
@@ -67,8 +67,8 @@ def test_run_script_full_monovariate():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
-                                   eval_method='full', use_cupy='yes')
+    results = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
+                                    eval_method='full', use_cupy='yes')
 
     assert results is not None
 
@@ -99,8 +99,8 @@ def test_run_script_full_monovariate_numpy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
-                                   eval_method='full', use_cupy='no')
+    results = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
+                                    eval_method='full', use_cupy='no')
 
     assert results is not None
 
@@ -132,12 +132,12 @@ def test_run_script_full_monovariate_compare_numpy_cupy():
         'y': y
     })
 
-    results_cp = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y',
-                                      monovariate_kernels=['quadratic'],
-                                      eval_method='full', use_cupy='yes')
+    results_cp = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y',
+                                       monovariate_kernels=['quadratic'],
+                                       eval_method='full', use_cupy='yes')
 
-    results_np = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
-                                   eval_method='full', use_cupy='no')
+    results_np = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'],
+                                       eval_method='full', use_cupy='no')
 
 
 
@@ -174,9 +174,9 @@ def test_naive_monovariate_numpy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y',
-                                   monovariate_kernels=['quadratic'],
-                                   eval_method='naive', use_cupy='no')
+    results = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y',
+                                    monovariate_kernels=['quadratic'],
+                                    eval_method='naive', use_cupy='no')
 
     assert results is not None
     assert results[0].kernel_quality > 0.4
@@ -211,9 +211,9 @@ def test_naive_duovariate_cupy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
-                                   duovariate_kernels=['poly2'],
-                                   eval_method='naive', use_cupy='yes')
+    results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                    duovariate_kernels=['poly2'],
+                                    eval_method='naive', use_cupy='yes')
 
     assert results is not None
     assert len(results) == 3
@@ -251,9 +251,9 @@ def test_naive_duovariate_numpy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
-                                   duovariate_kernels=['poly2'],
-                                   eval_method='naive', use_cupy='no')
+    results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                    duovariate_kernels=['poly2'],
+                                    eval_method='naive', use_cupy='no')
 
     assert results is not None
     assert len(results) == 3
@@ -290,9 +290,9 @@ def test_full_duovariate_cupy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
-                                   duovariate_kernels=['poly2'],
-                                   eval_method='full', use_cupy='yes')
+    results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                    duovariate_kernels=['poly2'],
+                                    eval_method='full', use_cupy='yes')
 
     assert results is not None
     assert len(results) == 3
@@ -329,9 +329,9 @@ def test_full_duovariate_numpy():
     })
 
 
-    results = kernel_search.search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
-                                   duovariate_kernels=['poly2'],
-                                   eval_method='full', use_cupy='no')
+    results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
+                                    duovariate_kernels=['poly2'],
+                                    eval_method='full', use_cupy='no')
 
     assert results is not None
     assert len(results) == 3

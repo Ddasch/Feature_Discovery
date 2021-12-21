@@ -6,9 +6,9 @@ import pytest
 
 from featurediscovery import kernel_search
 from featurediscovery.util.exceptions import *
-from featurediscovery.plotter import plot_kernel
+#from featurediscovery.plotter import plot_kernel
 
-def test_plotter_basic():
+def test_to_screen_individual():
     x = np.array([
         np.array([-3, 0]),
         np.array([-2, 1]),
@@ -33,11 +33,13 @@ def test_plotter_basic():
         'y': y
     })
 
-    results_cp = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y',
-                                       monovariate_kernels=['quadratic'],
-                                       eval_method='full', use_cupy='yes')
 
+    kernel_search.evaluate_kernels(df
+                                   , feature_space=['x1', 'x2']
+                                   , target_variable='y'
+                                   , monovariate_kernels=['quadratic']
+                                   , eval_method='full', use_cupy='yes'
+                                   , plot_ranking=False
+                                   , plot_individual_kernels=True
+                                   )
 
-    plot_kernel(df, results_cp[0], target_variable='y')
-
-    pass

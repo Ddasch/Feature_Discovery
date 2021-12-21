@@ -34,9 +34,9 @@ def test_run_script_full_monovariate_cupy_apply():
         'y': y
     })
 
-    results_cp = kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y',
-                                      monovariate_kernels=['quadratic'],
-                                      eval_method='full', use_cupy='yes')
+    results_cp = kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y',
+                                       monovariate_kernels=['quadratic'],
+                                       eval_method='full', use_cupy='yes')
 
 
     df_with_kernel = results_cp[0].apply(df)

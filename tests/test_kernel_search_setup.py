@@ -39,45 +39,45 @@ def test_kernel_init():
 
 
     with pytest.raises(TypeError) as e:
-        kernel_search.search()
+        kernel_search._search()
 
     with pytest.raises(TypeError) as e:
-        kernel_search.search(df)
+        kernel_search._search(df)
 
     with pytest.raises(TypeError) as e:
-        kernel_search.search(feature_space=['x1', 'x2'], target_variable='y')
+        kernel_search._search(feature_space=['x1', 'x2'], target_variable='y')
 
     with pytest.raises(TypeError) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'])
+        kernel_search._search(df, feature_space=['x1', 'x2'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y')
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y')
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x3'], target_variable='y', monovariate_kernels=['quadratic'])
+        kernel_search._search(df, feature_space=['x1', 'x3'], target_variable='y', monovariate_kernels=['quadratic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y1', monovariate_kernels=['quadratic'])
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y1', monovariate_kernels=['quadratic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable=['y'], monovariate_kernels=['quadratic'])
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable=['y'], monovariate_kernels=['quadratic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space='x1,x2', target_variable='y', monovariate_kernels=['quadratic'])
+        kernel_search._search(df, feature_space='x1,x2', target_variable='y', monovariate_kernels=['quadratic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df_wrong, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'])
+        kernel_search._search(df_wrong, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['quadratic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels='quadratic')
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels='quadratic')
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['magic'])
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=['magic'])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=[], duovariate_kernels=[])
+        kernel_search._search(df, feature_space=['x1', 'x2'], target_variable='y', monovariate_kernels=[], duovariate_kernels=[])
 
     with pytest.raises(SetupException) as e:
-        kernel_search.search(df, feature_space=['x1', 1], target_variable='y', monovariate_kernels=['quadratic'])
+        kernel_search._search(df, feature_space=['x1', 1], target_variable='y', monovariate_kernels=['quadratic'])
 
     print('')

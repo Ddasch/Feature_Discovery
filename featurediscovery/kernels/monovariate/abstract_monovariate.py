@@ -18,7 +18,6 @@ class Abstract_Monovariate_Kernel(Abstract_Kernel):
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
         return super().transform(x)
 
-
     def finalize(self, quality: float, features: List[str]):
         if len(features) != 1:
             raise Exception('Monovariate kernel requires exactly 1 feature name. The following names were provided {}'.format(features))

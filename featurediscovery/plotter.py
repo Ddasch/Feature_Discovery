@@ -97,7 +97,38 @@ def _plot_scree_3D(df, kernel:Abstract_Duovariate_Kernel, label_col:str
                    , to_file: bool = False
                    , export_folder: str = False
                    ):
-    pass
+    df_with_kernel = kernel.apply(df)
+
+    amount_of_plots = len(kernel.get_kernel_feature_names()) 
+
+    amount_of_plot_cols = int(np.round(np.sqrt(amount_of_plots)))
+    amount_of_plot_rows = int(np.ceil(np.sqrt(amount_of_plots)))
+
+    #fig, ax = plt.subplots(amount_of_plot_rows, amount_of_plot_cols, projection='3D')
+    fig = plt.figure()
+    ax_list = []
+    i = 1
+    for col_index in range(amount_of_plot_cols):
+        for row_index in range(amount_of_plot_rows):
+            ax = fig.add_subplot(amount_of_plot_rows, amount_of_plot_cols, i, projection='3d')
+            i = i+1
+            ax_list.append(ax)
+
+    #if amount_of_plot_cols * amount_of_plot_rows == 1:
+    #    ax_list = [ax]
+    #else:
+    #    ax_list = ax.reshape(-1)
+
+    ax_index = 0
+
+    for kernel_feature_out in kernel.get_kernel_feature_names():
+        _plot_scree_on_ax_3D(ax_list[ax_index], df_with_kernel, kernel.features[0], kernel.features[1],kernel_feature_out, label_col)
+        ax_index = ax_index + 1
+
+    fig.suptitle('Kernel {} with Performance {}'.format(kernel.get_kernel_name(), kernel.kernel_quality))
+
+    # plt.show(block=True)
+    _finalize_plot(kernel, fig, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
 
 
 def _plot_tsne(df:pd.DataFrame, kernel:Abstract_Kernel
@@ -141,6 +172,19 @@ def _plot_scree_on_ax_2D(ax:plt.Axes, df, feature_x1, feature_x2, label_col):
     ax.scatter(x1,x2, c=y)
 
     ax.set_title('{x1} vs {x2}'.format(x1=feature_x1, x2=feature_x2))
+
+
+def _plot_scree_on_ax_3D(ax:plt.Axes, df, feature_x1, feature_x2, feature_x3, label_col):
+
+
+    x1 = df[feature_x1].values.reshape(-1)
+    x2 = df[feature_x2].values.reshape(-1)
+    x3 = df[feature_x3].values.reshape(-1)
+    y = df[label_col].values.reshape(-1)
+
+    ax.scatter3D(x1,x2,x3, c=y)
+
+    ax.set_title('{x1} vs {x2} vs {x3}'.format(x1=feature_x1, x2=feature_x2, x3=feature_x3))
 
 
 

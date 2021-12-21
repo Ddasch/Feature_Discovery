@@ -14,7 +14,8 @@ class Abstract_Kernel(ABC):
     finalized:bool = False
     kernel_quality:float = None
     api:str = None
-    features:List[str] = None
+    kernel_input_features:List[str] = None
+    model_input_features: List[str] = None
     x_decision_boundary: Union[np.ndarray, cp.ndarray] = None
     y_decision_boundary: Union[np.ndarray, cp.ndarray] = None
 
@@ -57,19 +58,21 @@ class Abstract_Kernel(ABC):
     def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
         pass
 
-    def finalize(self, quality:float, features:List[str], x_decision_boundary: Union[np.ndarray, cp.ndarray]
+    def finalize(self, quality:float, kernel_input_features:List[str], model_input_features:List[str]
+                 , x_decision_boundary: Union[np.ndarray, cp.ndarray]
                  , y_decision_boundary: Union[np.ndarray, cp.ndarray]):
         '''
         Once kernel quality has been computed, store meta-information about this kernel
         :param quality: the quality metric for sorting the kernel by quality
-        :param features: feature names so that in the future the kernel can be directly applied on the dataframe
+        :param kernel_input_features: feature names so that in the future the kernel can be directly applied on the dataframe
         :param x_decision_boundary
         :param y_decision_boundary
         :return:
         '''
         self.finalized = True
         self.kernel_quality = quality
-        self.features = features
+        self.kernel_input_features = kernel_input_features
+        self.model_input_features = model_input_features
         self.x_decision_boundary = self.standardizer.inverse_transform(x_decision_boundary)
         self.y_decision_boundary = y_decision_boundary
 
@@ -80,8 +83,8 @@ class Abstract_Kernel(ABC):
 
         x_indexi = []
         for f in feature_names:
-            if f in self.features:
-                x_indexi.append(self.features.index(f))
+            if f in self.kernel_input_features:
+                x_indexi.append(self.kernel_input_features.index(f))
                 continue
 
             if f in self.get_kernel_feature_names():
@@ -95,16 +98,16 @@ class Abstract_Kernel(ABC):
         if not self.finalized:
             raise Exception('Cannot apply kernel to DF. Kernel is not finalized yet')
 
-        if len(self.features) == 0 or self.features is None:
+        if len(self.kernel_input_features) == 0 or self.kernel_input_features is None:
             raise Exception('Illegal kernel state. Kernel is tagged as finalized but has no feature name list...')
 
-        for f in self.features:
+        for f in self.kernel_input_features:
             if f not in df.columns:
                 raise Exception('Cannot apply kernel. Feature {} not in dataframe'.format(f))
 
 
 
-        X = df[self.features].to_numpy(dtype=np.float64)
+        X = df[self.kernel_input_features].to_numpy(dtype=np.float64)
         if self.api == 'cupy':
             X = cp.array(X)
 
@@ -127,5 +130,5 @@ class Abstract_Kernel(ABC):
         pass
 
     @abstractmethod
-    def get_kernel_feature_names(self) -> List[str]:
+    def get_kernel_feature_names(self, input_features:List[str]=None) -> List[str]:
         pass

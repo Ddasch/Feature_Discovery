@@ -68,7 +68,7 @@ def _plot_scree_2D(df, kernel:Abstract_Monovariate_Kernel, label_col:str
 
     df_with_kernel = kernel.apply(df)
 
-    amount_of_plots = len(kernel.get_kernel_feature_names()) * len(kernel.features)
+    amount_of_plots = len(kernel.get_kernel_feature_names()) * len(kernel.kernel_input_features)
 
     amount_of_plot_cols = int(np.round(np.sqrt(amount_of_plots)))
     amount_of_plot_rows = int(np.ceil(np.sqrt(amount_of_plots)))
@@ -81,7 +81,7 @@ def _plot_scree_2D(df, kernel:Abstract_Monovariate_Kernel, label_col:str
         ax_list = ax.reshape(-1)
 
     ax_index = 0
-    for input_feature in kernel.features:
+    for input_feature in kernel.kernel_input_features:
         for kernel_feature in kernel.get_kernel_feature_names():
             _plot_scree_on_ax_2D(ax_list[ax_index], df_with_kernel, input_feature, kernel_feature, label_col)
 
@@ -126,9 +126,9 @@ def _plot_scree_3D(df, kernel:Abstract_Duovariate_Kernel, label_col:str
     ax_index = 0
 
     for kernel_feature_out in kernel.get_kernel_feature_names():
-        _plot_scree_on_ax_3D(ax_list[ax_index], df_with_kernel, kernel.features[0], kernel.features[1],kernel_feature_out, label_col)
+        _plot_scree_on_ax_3D(ax_list[ax_index], df_with_kernel, kernel.kernel_input_features[0], kernel.kernel_input_features[1], kernel_feature_out, label_col)
         if kernel.x_decision_boundary is not None:
-            _plot_boundary_on_ax_3D(ax_list[ax_index], kernel.features[0], kernel.features[1],kernel_feature_out, kernel)
+            _plot_boundary_on_ax_3D(ax_list[ax_index], kernel.kernel_input_features[0], kernel.kernel_input_features[1], kernel_feature_out, kernel)
 
         ax_index = ax_index + 1
 
@@ -148,7 +148,7 @@ def _plot_tsne(df:pd.DataFrame, kernel:Abstract_Kernel
         df.sample(n=2000)
     df_with_kernel = kernel.apply(df)
 
-    all_features = kernel.features.copy()
+    all_features = kernel.kernel_input_features.copy()
     for f in kernel.get_kernel_feature_names():
         all_features.append(f)
 

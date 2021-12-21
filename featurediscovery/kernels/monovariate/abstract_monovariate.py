@@ -18,12 +18,13 @@ class Abstract_Monovariate_Kernel(Abstract_Kernel):
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
         return super().transform(x)
 
-    def finalize(self, quality: float, features: List[str],x_decision_boundary: Union[np.ndarray, cp.ndarray]
+    def finalize(self, quality:float, kernel_input_features:List[str], model_input_features:List[str]
+                 , x_decision_boundary: Union[np.ndarray, cp.ndarray]
                  , y_decision_boundary: Union[np.ndarray, cp.ndarray]):
-        if len(features) != 1:
-            raise Exception('Monovariate kernel requires exactly 1 feature name. The following names were provided {}'.format(features))
+        if len(kernel_input_features) != 1:
+            raise Exception('Monovariate kernel requires exactly 1 feature name. The following names were provided {}'.format(kernel_input_features))
 
-        super().finalize(quality, features, x_decision_boundary, y_decision_boundary)
+        super().finalize(quality, kernel_input_features, model_input_features, x_decision_boundary, y_decision_boundary)
 
 
 

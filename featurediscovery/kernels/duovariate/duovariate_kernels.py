@@ -1,5 +1,5 @@
 
-from typing import Union
+from typing import Union, List
 
 import cupy as cp
 import numpy as np
@@ -134,14 +134,13 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
             return self.poly.fit_transform(x)[:,3:]
 
 
-    def get_kernel_feature_names(self):
-        return ['{}^2'.format(self.features[0])
-            , '{}*{}'.format(self.features[0], self.features[1])
-            , '{}^2'.format(self.features[1])]
-
+    def _get_kernel_feature_names(self, f1:str, f2:str):
+        return ['{}^2'.format(f1)
+            , '{}*{}'.format(f1, f2)
+            , '{}^2'.format(f2)]
 
     def get_kernel_name(self) -> str:
-        return 'Polynomial2 {x1} {x2} {std}'.format(x1=self.features[0], x2=self.features[1],std=self.standardizer.get_standardizer_name())
+        return 'Polynomial2 {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
 
 
 sigmoid_kernel_backward_singleton = None
@@ -178,7 +177,7 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
 
 
     def get_kernel_name(self):
-        return 'Sigmoid Backprop dA={} Z={}'.format(self.features[0], self.features[1])
+        return 'Sigmoid Backprop dA={} Z={}'.format(self.kernel_input_features[0], self.kernel_input_features[1])
 
     def get_kernel_feature_names(self):
         return ['dA_prev']

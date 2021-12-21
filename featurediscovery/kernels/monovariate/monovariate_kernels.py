@@ -72,10 +72,10 @@ class Quadratic_Kernel(Abstract_Monovariate_Kernel):
     '''
 
     def get_kernel_name(self):
-        return 'Quadratic {} {}'.format(self.features[0], self.standardizer.get_standardizer_name())
+        return 'Quadratic {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
 
     def get_kernel_feature_names(self):
-        return [self.features[0] + '^2']
+        return [self.kernel_input_features[0] + '^2']
 
 
 class Gaussian_Kernel_Taylor_Aprox(Abstract_Monovariate_Kernel):
@@ -197,11 +197,11 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
         if not self.finalized:
             raise Exception('Attempting to apply kernel that has not been finalized yet')
 
-        X = df[self.features].to_numpy(dtype=np.float64)
+        X = df[self.kernel_input_features].to_numpy(dtype=np.float64)
 
         X_square = self.transform(X)
 
-        k_feat_name = 'sigmoid(' + self.features[0] + ')'
+        k_feat_name = 'sigmoid(' + self.kernel_input_features[0] + ')'
 
         df[k_feat_name] = X_square
 
@@ -210,7 +210,7 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
         return df
 
     def get_kernel_name(self):
-        return 'Sigmoid {} {}'.format(self.features[0], self.standardizer.get_standardizer_name())
+        return 'Sigmoid {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
 
     def get_kernel_feature_names(self):
-        return ['sig({})'.format(self.features[0])]
+        return ['sig({})'.format(self.kernel_input_features[0])]

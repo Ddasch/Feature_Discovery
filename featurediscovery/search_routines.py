@@ -486,14 +486,15 @@ def _generic(df:pd.DataFrame
         #slice X so that it only has the feature for the input kernel
         if kernel_type == 'monovariate':
             feature_index = feature_name_2_index[kernel_dict['feature_a']]
-            feature_names = [kernel_dict['feature_a']]
+            kernel_input_feature_names = [kernel_dict['feature_a']]
             X_slice = X[:,[feature_index]]
             # apply the kernel function to the selected feature
             kernel = get_mono_kernel(kernel_dict['kernel'])
+
         if kernel_type == 'duovariate':
             feature_index_a = feature_name_2_index[kernel_dict['feature_a']]
             feature_index_b = feature_name_2_index[kernel_dict['feature_b']]
-            feature_names = [kernel_dict['feature_a'], kernel_dict['feature_b']]
+            kernel_input_feature_names = [kernel_dict['feature_a'], kernel_dict['feature_b']]
             X_slice = X[:, [feature_index_a, feature_index_b]]
             # apply the kernel function to the selected feature
             kernel = get_duo_kernel(kernel_dict['kernel'])
@@ -521,7 +522,15 @@ def _generic(df:pd.DataFrame
         x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_final)
 
         # finalize result in kernel
-        kernel.finalize(fit_quality, feature_names
+        # depending on search method, construct input space for model
+        if search_method == 'naive':
+            model_input_feature_names = kernel.get_kernel_feature_names()
+        if search_method == 'full':
+            model_input_feature_names = feature_space
+            for f in kernel.get_kernel_feature_names(kernel_input_feature_names):
+                model_input_feature_names.append(f)
+
+        kernel.finalize(fit_quality, kernel_input_feature_names, model_input_feature_names
                         , x_decision_boundary, y_decision_boundary)
 
         #append to list

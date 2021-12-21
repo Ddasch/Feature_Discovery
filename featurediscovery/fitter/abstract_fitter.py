@@ -68,7 +68,7 @@ class Abstract_Fitter(ABC):
         n_dims = len(x_mins)
 
         n_boundary_samples = 5
-        min_decision_samples = 1000
+        min_decision_samples = 100
         # tolerance range of [0.5-tolerance, 0.5+tolerance] of scores considered to be close enough to decision boundary
         y_prob_tolerance = 0.01
 
@@ -97,11 +97,15 @@ class Abstract_Fitter(ABC):
             y_hat_decision_mask_samples = [x for x in range(x_linspace.shape[0]) if y_hat_decision_mask[x][0]]
             y_hat_decision_boundary = y_hat_probs[y_hat_decision_mask]
 
-            if len(y_hat_decision_boundary) >= min_decision_samples:
+            amount_of_samples_within_boundary = len(y_hat_decision_boundary)
+            if amount_of_samples_within_boundary >= min_decision_samples:
                 enough_decision_boundary_points = True
             else:
+                if len(y_hat_probs[y_hat_probs < 0.5].reshape(-1)) in [0, y_hat_probs.shape[0]]:
+                    #special abort procedure, model predicts the same for entire input space
+                    enough_decision_boundary_points = True
+
                 n_boundary_samples = int(n_boundary_samples * 1.5)
-                continue
 
             # if use_cupy:
             #    y_hat_decision_mask_2d = cp.ones((n_dims), dtype=bool) * y_hat_decision_mask

@@ -76,7 +76,7 @@ def test_scree_plot_boundary3D():
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
                                    , eval_method='full'
-                                   , use_cupy='yes'
+                                   , use_cupy='no'
                                    , plot_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='scree'

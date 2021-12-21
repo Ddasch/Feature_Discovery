@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import os
 from matplotlib import pyplot as plt
+from sklearn.manifold import TSNE
+
 
 from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_Monovariate_Kernel
@@ -27,6 +29,8 @@ def plot_kernel(df:pd.DataFrame
     if to_file  and export_folder is None:
         raise Exception('Need to specify a folder for the exports')
 
+    df = df.copy()
+
     if to_file:
         try:
             os.makedirs(export_folder + '/figures/', exist_ok=True)
@@ -40,7 +44,8 @@ def plot_kernel(df:pd.DataFrame
     if mode == 'scree':
         _plot_scree(df=df, kernel=kernel, label_col=target_variable, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
 
-
+    if mode == 'tsne':
+        _plot_tsne(df=df, kernel=kernel, label_col=target_variable, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
 
 
 def _plot_scree(df, kernel:Abstract_Kernel, label_col:str
@@ -53,6 +58,7 @@ def _plot_scree(df, kernel:Abstract_Kernel, label_col:str
 
     if isinstance(kernel, Abstract_Duovariate_Kernel):
         _plot_scree_3D(df, kernel, label_col=label_col, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
+
 
 def _plot_scree_2D(df, kernel:Abstract_Monovariate_Kernel, label_col:str
                    , to_screen: bool = True
@@ -86,7 +92,7 @@ def _plot_scree_2D(df, kernel:Abstract_Monovariate_Kernel, label_col:str
     _finalize_plot(kernel, fig, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
 
 
-def _plot_scree_3D(df, kernel:Abstract_Kernel, label_col:str
+def _plot_scree_3D(df, kernel:Abstract_Duovariate_Kernel, label_col:str
                    , to_screen: bool = True
                    , to_file: bool = False
                    , export_folder: str = False
@@ -94,6 +100,34 @@ def _plot_scree_3D(df, kernel:Abstract_Kernel, label_col:str
     pass
 
 
+def _plot_tsne(df:pd.DataFrame, kernel:Abstract_Kernel
+                   , label_col:str
+                   , to_screen: bool = True
+                   , to_file: bool = False
+                   , export_folder: str = False):
+
+    if len(df) > 2000:
+        df.sample(n=2000)
+    df_with_kernel = kernel.apply(df)
+
+    all_features = kernel.features.copy()
+    for f in kernel.get_kernel_feature_names():
+        all_features.append(f)
+
+    X = df_with_kernel[all_features].to_numpy(dtype=np.float64)
+    y = df_with_kernel[label_col].to_numpy(dtype=np.float64)
+
+    tsne = TSNE(n_components=2)
+
+    X_tsne = tsne.fit_transform(X)
+
+    fig, ax = plt.subplots(1, 1)
+
+    fig.suptitle('Kernel {} with Performance {} TSNE'.format(kernel.get_kernel_name(), kernel.kernel_quality))
+
+    ax.scatter(X_tsne[:,0].reshape(-1), X_tsne[:,1].reshape(-1), c=y.reshape(-1))
+
+    _finalize_plot(kernel, fig, to_screen=to_screen, to_file=to_file, export_folder=export_folder)
 
 
 def _plot_scree_on_ax_2D(ax:plt.Axes, df, feature_x1, feature_x2, label_col):

@@ -150,6 +150,7 @@ def evaluate_kernels(df:pd.DataFrame
             , use_cupy:str = 'auto'
             , plot_ranking:bool=True
             , plot_individual_kernels:bool=False
+            , kernel_plot_mode:str = 'scree'
             , export_folder:str = None
             , export_ranking:bool = True
             , export_formats:List[str] = None
@@ -171,7 +172,8 @@ def evaluate_kernels(df:pd.DataFrame
 
     if plot_individual_kernels or export_individual_kernel_plots:
         for k in kernel_list:
-            plot_kernel(df=df, kernel=k, target_variable=target_variable, mode='scree'
+            plot_kernel(df=df, kernel=k, target_variable=target_variable
+                        , mode=kernel_plot_mode
                         , to_screen=plot_individual_kernels
                         , to_file=export_individual_kernel_plots
                         , export_folder=export_folder)

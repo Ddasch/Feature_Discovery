@@ -77,6 +77,9 @@ class Quadratic_Kernel(Abstract_Monovariate_Kernel):
     def _get_kernel_feature_names(self, f1):
         return [f1 + '^2']
 
+    def get_kernel_type(self) -> str:
+        return 'Quadratic'
+
 
 class Gaussian_Kernel_Taylor_Aprox(Abstract_Monovariate_Kernel):
     '''
@@ -214,3 +217,6 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
 
     def _get_kernel_feature_names(self, f1):
         return ['sig({})'.format(f1)]
+
+    def get_kernel_type(self) -> str:
+        return 'sigmoid'

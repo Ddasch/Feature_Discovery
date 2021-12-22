@@ -162,4 +162,5 @@ def test_ranking_to_screen():
                                    , plot_individual_kernels=False
                                    , kernel_plot_mode='scree'
                                    , export_folder='./test_output/'
+                                   , export_ranking=True
                                    )

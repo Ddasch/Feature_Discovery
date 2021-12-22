@@ -132,3 +132,7 @@ class Abstract_Kernel(ABC):
     @abstractmethod
     def get_kernel_feature_names(self, input_features:List[str]=None) -> List[str]:
         pass
+
+    @abstractmethod
+    def get_kernel_type(self) -> str:
+        pass

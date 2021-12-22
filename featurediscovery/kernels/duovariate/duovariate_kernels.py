@@ -100,6 +100,18 @@ class Polynomial_Third_Order_Kernel(Abstract_Duovariate_Kernel):
         x_ret = cp.column_stack(x_ret)
         return x_ret
 
+    def _get_kernel_feature_names(self, f1:str, f2:str):
+        return ['{}^3'.format(f1)
+            , '3*{}^2*{}'.format(f1, f2)
+            , '3*{}*{}^2'.format(f1, f2)
+            , '{}^3'.format(f2)]
+
+    def get_kernel_name(self) -> str:
+        return 'Polynomial3 {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
+
+    def get_kernel_type(self) -> str:
+        return 'Polynomial3'
+
 
 polynomial_2_singleton = None
 class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
@@ -142,6 +154,8 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
     def get_kernel_name(self) -> str:
         return 'Polynomial2 {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
 
+    def get_kernel_type(self) -> str:
+        return 'Polynomial2'
 
 sigmoid_kernel_backward_singleton = None
 class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
@@ -179,8 +193,14 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
     def get_kernel_name(self):
         return 'Sigmoid Backprop dA={} Z={}'.format(self.kernel_input_features[0], self.kernel_input_features[1])
 
-    def get_kernel_feature_names(self):
+    #def get_kernel_feature_names(self, input_features:List[str]=None):
+    #    return ['dA_prev']
+
+    def _get_kernel_feature_names(self, f1: str, f2: str):
         return ['dA_prev']
+
+    def get_kernel_type(self) -> str:
+        return 'Sigmoid Backprop'
 
     '''
     def _sigmoid_backward(dA, cache):

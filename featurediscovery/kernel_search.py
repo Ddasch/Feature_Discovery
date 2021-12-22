@@ -11,6 +11,7 @@ from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
 from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
 from featurediscovery import plotter
+from featurediscovery import exporter
 
 def _search(df:pd.DataFrame
             , target_variable:str
@@ -141,22 +142,21 @@ def _search(df:pd.DataFrame
 
 
 def evaluate_kernels(df:pd.DataFrame
-            , target_variable:str
-            , feature_space:List[str]
-            , eval_method:str = 'full'
-            , mandatory_features:List[str] = None
+            , target_variable: str
+            , feature_space: List[str]
+            , eval_method: str = 'full'
+            , mandatory_features: List[str] = None
             , monovariate_kernels: List[str] = None
             , duovariate_kernels: List[str] = None
-            , use_cupy:str = 'auto'
+            , use_cupy: str = 'auto'
             , plot_ranking:bool=True
             , plot_individual_kernels:bool=False
-            , kernel_plot_mode:str = 'scree'
-            , export_folder:str = None
-            , export_ranking:bool = False
-            , export_formats:List[str] = None
-            , export_individual_kernel_plots:bool = False
+            , kernel_plot_mode: str = 'scree'
+            , export_folder: str = None
+            , export_ranking: bool = False
+            , export_formats: List[str] = None
+            , export_individual_kernel_plots: bool = False
          ) -> List[Abstract_Kernel]:
-
 
     kernel_list = _search(df=df
                           , target_variable=target_variable
@@ -186,5 +186,9 @@ def evaluate_kernels(df:pd.DataFrame
                      , export_folder=export_folder
                      )
 
+    if export_formats is not None:
+        for f in export_formats:
+            if f in ['csv', 'json']:
+                exporter.export_kernel_ranking(kernel_list, export_folder, f)
 
 

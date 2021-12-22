@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import os
+from typing import List
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
 
@@ -238,5 +239,50 @@ def _finalize_plot(kernel:Abstract_Kernel
     if to_screen:
         plt.show(block=True)
 
+
+
+def plot_ranking(kernel_list:List[Abstract_Kernel]
+                 , to_screen: bool = True
+                 , to_file: bool = False
+                 , export_folder: str = False
+                 ):
+
+    if to_file and export_folder is None:
+        raise Exception('Need to specify a folder for the exports')
+
+    if to_file:
+        try:
+            os.makedirs(export_folder , exist_ok=True)
+        except Exception as e:
+            print('ERROR whilst trying to create export folder {}'.format(export_folder))
+            raise e
+
+        if not os.path.isdir(export_folder):
+            raise Exception('Export folder is not a folder: {}'.format(export_folder))
+
+
+    kernel_names = [k.get_kernel_name() for k in kernel_list]
+    kernel_qualities = [k.kernel_quality for k in kernel_list]
+
+    y_pos = np.flip(np.arange(len(kernel_qualities)))
+
+    fig, ax = plt.subplots()
+
+    ax.barh(y_pos, kernel_qualities)
+
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(labels=kernel_names, fontdict={'fontsize': 8})
+    ax.set_xlabel('Performance')
+    ax.set_title('Kernel Quality Ranking')
+    plt.tight_layout()
+
+    if to_file:
+        filename = 'performance_ranking.png'
+        full_path = '{export_folder}/{filename}'.format(export_folder=export_folder, filename=filename)
+
+        fig.savefig(full_path)
+
+    if to_screen:
+        plt.show(block=True)
 
 

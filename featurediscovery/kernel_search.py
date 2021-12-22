@@ -10,7 +10,7 @@ from featurediscovery.kernels.duovariate.duovariate_kernels import SUPPORTED_DUO
 from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
 from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
-from featurediscovery.plotter import plot_kernel
+from featurediscovery import plotter
 
 def _search(df:pd.DataFrame
             , target_variable:str
@@ -152,7 +152,7 @@ def evaluate_kernels(df:pd.DataFrame
             , plot_individual_kernels:bool=False
             , kernel_plot_mode:str = 'scree'
             , export_folder:str = None
-            , export_ranking:bool = True
+            , export_ranking:bool = False
             , export_formats:List[str] = None
             , export_individual_kernel_plots:bool = False
          ) -> List[Abstract_Kernel]:
@@ -172,14 +172,19 @@ def evaluate_kernels(df:pd.DataFrame
 
     if plot_individual_kernels or export_individual_kernel_plots:
         for k in kernel_list:
-            plot_kernel(df=df, kernel=k, target_variable=target_variable
+            plotter.plot_kernel(df=df, kernel=k, target_variable=target_variable
                         , mode=kernel_plot_mode
                         , to_screen=plot_individual_kernels
                         , to_file=export_individual_kernel_plots
                         , export_folder=export_folder)
 
 
-
+    if plot_ranking or (export_ranking and 'png' in export_formats):
+        plotter.plot_ranking(kernel_list
+                     , to_screen=plot_ranking
+                     , to_file=export_ranking
+                     , export_folder=export_folder
+                     )
 
 
 

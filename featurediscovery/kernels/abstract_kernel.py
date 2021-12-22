@@ -73,7 +73,31 @@ class Abstract_Kernel(ABC):
         self.kernel_quality = quality
         self.kernel_input_features = kernel_input_features
         self.model_input_features = model_input_features
-        self.x_decision_boundary = self.standardizer.inverse_transform(x_decision_boundary)
+
+
+        '''
+        #NOTE: raw input feature are not standardized when also given to the model, only when computing kernel
+                transformation. Inverse transform not needed
+        #if the model feature space alse included the raw features that were the input to the kernel (aka full search),
+        # inverse transform the decision boundary back to its original space
+        model_space_kernel_feature_indexi = []
+        for f in self.kernel_input_features:
+            if f in self.model_input_features:
+                model_space_kernel_feature_indexi.append(model_input_features.index(f))
+
+        model_space_non_kernel_feature_indexi = [i for i in range(len(self.model_input_features))
+                                     if self.model_input_features[i] not in self.kernel_input_features]
+
+        if len(model_space_kernel_feature_indexi) > 0:
+            x_decision_boundary_kernel_input = x_decision_boundary[:,model_space_kernel_feature_indexi]
+            x_decision_boundary_kernel_input_inverse_transformed = self.standardizer.inverse_transform(x_decision_boundary_kernel_input)
+
+            x_decision_boundary[:,model_space_kernel_feature_indexi] = x_decision_boundary_kernel_input_inverse_transformed
+            #for i in range(len(model_space_kernel_feature_indexi)):
+            #    x_decision_boundary[:,model_space_kernel_feature_indexi[i]] = x_decision_boundary_kernel_input_inverse_transformed[i]
+        '''
+
+        self.x_decision_boundary = x_decision_boundary
         self.y_decision_boundary = y_decision_boundary
 
     def get_decision_boundary(self, feature_names:List[str]):

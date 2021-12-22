@@ -13,18 +13,18 @@ from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_M
 SUPPORTED_MONOVARIATE_KERNELS = ['quadratic', 'gaussian_approx', 'sigmoid']
 
 
-def get_mono_kernel(name:str):
+def get_mono_kernel(name:str, standardizer:str) -> Abstract_Monovariate_Kernel:
     if name not in SUPPORTED_MONOVARIATE_KERNELS:
         raise Exception('unsupported kernel')
 
     if name == 'quadratic':
-        return Quadratic_Kernel()
+        return Quadratic_Kernel(standardizer)
 
     if name == 'gaussian_approx':
-        return Gaussian_Kernel_Taylor_Aprox()
+        return Gaussian_Kernel_Taylor_Aprox(standardizer)
 
     if name == 'sigmoid':
-        return Sigmoid_Kernel()
+        return Sigmoid_Kernel(standardizer)
 
 
 

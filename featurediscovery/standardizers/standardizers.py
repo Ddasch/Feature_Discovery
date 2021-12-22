@@ -5,7 +5,7 @@ import cupy as cp
 import numpy as np
 
 
-SUPPORTED_STANDARDIZERS = ['dummy', 'mean', 'standard', 'raw']
+SUPPORTED_STANDARDIZERS = ['centralized', 'standard', 'raw']
 
 
 def get_scaler(scaler_name:str) -> Abstract_Standardizer:
@@ -16,7 +16,7 @@ def get_scaler(scaler_name:str) -> Abstract_Standardizer:
     if scaler_name in ['Dummy', 'dummy', 'none', 'None', 'raw'] or scaler_name is None:
         return Dummy_Standardizer()
 
-    if scaler_name in ['Mean', 'mean']:
+    if scaler_name in ['Mean', 'mean', 'centralized']:
         return Mean_Centralizer()
 
     if scaler_name in ['standard']:

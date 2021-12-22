@@ -7,6 +7,7 @@ from typing import List
 from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 from featurediscovery.kernels.monovariate.monovariate_kernels import SUPPORTED_MONOVARIATE_KERNELS
 from featurediscovery.kernels.duovariate.duovariate_kernels import SUPPORTED_DUOVARIATE_KERNELS
+from featurediscovery.standardizers.standardizers import SUPPORTED_STANDARDIZERS
 from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
 from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
@@ -20,6 +21,7 @@ def _search(df:pd.DataFrame
             , mandatory_features:List[str] = None
             , monovariate_kernels: List[str] = None
             , duovariate_kernels: List[str] = None
+            , feature_standardizers:List[str] = None
             , use_cupy:str = 'auto'
             ) -> List[Abstract_Kernel]:
 
@@ -78,6 +80,15 @@ def _search(df:pd.DataFrame
     if eval_method not in ['full', 'naive']:
         raise SetupException('Eval method must be in [full, naive]')
 
+    #check that standardizer lise is correct
+    if feature_standardizers is None:
+        raise SetupException('No standardizer list provided. Must supply at least 1 out of {}'.format(SUPPORTED_STANDARDIZERS))
+
+    for s in feature_standardizers:
+        if s not in SUPPORTED_STANDARDIZERS:
+            raise SetupException('Standardizer {} not supported. Supported standardizers: {}'.format(s, SUPPORTED_STANDARDIZERS))
+
+
     if use_cupy not in ['yes', 'no', 'auto']:
         raise SetupException('Unsupported cupy use mode {}. Must be in [yes, no, auto]'.format(use_cupy))
 
@@ -104,13 +115,13 @@ def _search(df:pd.DataFrame
         features_to_try = mandatory_features
     mono_kernel_dicts = general_utilities._generate_all_list_combinations(kernel=monovariate_kernels
                                                                           , feature_a=features_to_try
-                                                                          , standardizer=['raw'])
+                                                                          , standardizer=feature_standardizers)
 
     #generate list of duovariate kernels to try
     duo_kernel_dicts = general_utilities.create_duovariate_combination_dicts(mandatory_features=mandatory_features
                                                                              , feature_space=feature_space
                                                                              , kernels=duovariate_kernels
-                                                                             , standardizer=['raw'])
+                                                                             , standardizer=feature_standardizers)
 
 
     all_kernels = []
@@ -148,6 +159,7 @@ def evaluate_kernels(df:pd.DataFrame
             , mandatory_features: List[str] = None
             , monovariate_kernels: List[str] = None
             , duovariate_kernels: List[str] = None
+            , feature_standardizers:List[str] = None
             , use_cupy: str = 'auto'
             , plot_ranking:bool=True
             , plot_individual_kernels:bool=False
@@ -165,6 +177,7 @@ def evaluate_kernels(df:pd.DataFrame
                           , mandatory_features=mandatory_features
                           , monovariate_kernels=monovariate_kernels
                           , duovariate_kernels=duovariate_kernels
+                          , feature_standardizers=feature_standardizers
                           , use_cupy=use_cupy)
 
 
@@ -191,4 +204,4 @@ def evaluate_kernels(df:pd.DataFrame
             if f in ['csv', 'json']:
                 exporter.export_kernel_ranking(kernel_list, export_folder, f)
 
-
+    return kernel_list

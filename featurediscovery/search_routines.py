@@ -489,7 +489,7 @@ def _generic(df:pd.DataFrame
             kernel_input_feature_names = [kernel_dict['feature_a']]
             X_slice = X[:,[feature_index]]
             # apply the kernel function to the selected feature
-            kernel = get_mono_kernel(kernel_dict['kernel'])
+            kernel = get_mono_kernel(kernel_dict['kernel'], kernel_dict['standardizer'])
 
         if kernel_type == 'duovariate':
             feature_index_a = feature_name_2_index[kernel_dict['feature_a']]
@@ -497,7 +497,7 @@ def _generic(df:pd.DataFrame
             kernel_input_feature_names = [kernel_dict['feature_a'], kernel_dict['feature_b']]
             X_slice = X[:, [feature_index_a, feature_index_b]]
             # apply the kernel function to the selected feature
-            kernel = get_duo_kernel(kernel_dict['kernel'])
+            kernel = get_duo_kernel(kernel_dict['kernel'], kernel_dict['standardizer'])
 
 
         X_kernel = kernel.fit_and_transform(X_slice)
@@ -524,7 +524,7 @@ def _generic(df:pd.DataFrame
         # finalize result in kernel
         # depending on search method, construct input space for model
         if search_method == 'naive':
-            model_input_feature_names = kernel.get_kernel_feature_names()
+            model_input_feature_names = kernel.get_kernel_feature_names(kernel_input_feature_names)
         if search_method == 'full':
             model_input_feature_names = feature_space
             for f in kernel.get_kernel_feature_names(kernel_input_feature_names):

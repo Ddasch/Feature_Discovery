@@ -205,6 +205,8 @@ def _plot_boundary_on_ax_2D(ax:plt.Axes, feature_x1, feature_x2, kernel:Abstract
         x2 = x2.get()
 
     ax.scatter(x1, x2, marker='.', color='red')
+    ax.set_xlabel(feature_x1)
+    ax.set_ylabel(feature_x2)
 
 
 def _plot_boundary_on_ax_3D(ax:plt.Axes, feature_x1, feature_x2, feature_x3, kernel:Abstract_Kernel):
@@ -222,6 +224,10 @@ def _plot_boundary_on_ax_3D(ax:plt.Axes, feature_x1, feature_x2, feature_x3, ker
 
     ax.scatter3D(x1, x2,x3, marker='.', color='red')
 
+    ax.set_xlabel(feature_x1)
+    ax.set_ylabel(feature_x2)
+    ax.set_zlabel(feature_x3)
+
 
 def _finalize_plot(kernel:Abstract_Kernel
                    , fig:plt.Figure
@@ -229,6 +235,8 @@ def _finalize_plot(kernel:Abstract_Kernel
                    , to_file: bool = False
                    , export_folder: str = False
                    ):
+
+    fig.tight_layout()
 
     if to_file:
         filename = '{qual} {kernelname}.png'.format(qual=kernel.kernel_quality, kernelname=kernel.get_kernel_name())

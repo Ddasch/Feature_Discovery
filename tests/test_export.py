@@ -40,6 +40,7 @@ def test_to_screen_individual():
                                    , feature_space=['x1', 'x2']
                                    , target_variable='y'
                                    , monovariate_kernels=['quadratic']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
                                    , plot_ranking=False
@@ -84,6 +85,7 @@ def test_to_file_individual():
                                    , feature_space=['x1', 'x2']
                                    , target_variable='y'
                                    , monovariate_kernels=['quadratic']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
                                    , plot_ranking=False
@@ -130,6 +132,7 @@ def test_to_screen_individual_tsne():
                                    , target_variable='y'
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
                                    , plot_ranking=False
@@ -171,6 +174,7 @@ def test_to_screen_individual_Duovariate_scree():
                                    , target_variable='y'
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='no'
                                    , plot_ranking=False
@@ -213,6 +217,7 @@ def test_to_csv_performances():
                                    , target_variable='y'
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='no'
                                    , plot_ranking=False
@@ -257,6 +262,7 @@ def test_to_json_performances():
                                    , target_variable='y'
                                    #, monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
+                                   , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='no'
                                    , plot_ranking=False

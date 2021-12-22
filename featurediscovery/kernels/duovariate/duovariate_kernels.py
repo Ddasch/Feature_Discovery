@@ -12,21 +12,21 @@ from sklearn.preprocessing import PolynomialFeatures
 SUPPORTED_DUOVARIATE_KERNELS = ['difference', 'magnitude', 'poly3', 'poly2']
 
 
-def get_duo_kernel(kernel_name:str) -> Abstract_Duovariate_Kernel:
+def get_duo_kernel(kernel_name:str, standardizer:str) -> Abstract_Duovariate_Kernel:
     if kernel_name not in SUPPORTED_DUOVARIATE_KERNELS:
         raise Exception('Unknown kernel {}. Supported kernels are {}'.format(kernel_name, SUPPORTED_DUOVARIATE_KERNELS))
 
     if kernel_name == 'poly2':
-        return Polynomial_Second_Order_Kernel()
+        return Polynomial_Second_Order_Kernel(standardizer)
 
     if kernel_name == 'poly3':
-        return Polynomial_Third_Order_Kernel()
+        return Polynomial_Third_Order_Kernel(standardizer)
 
     if kernel_name == 'difference':
-        return Difference_Kernel()
+        return Difference_Kernel(standardizer)
 
     if kernel_name == 'magnitude':
-        return Magnitude_Kernel()
+        return Magnitude_Kernel(standardizer)
 
 
 class Difference_Kernel(Abstract_Duovariate_Kernel):

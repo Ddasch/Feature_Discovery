@@ -277,3 +277,53 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
         dZ = dA * s * (1 - s)
         return dZ
     '''
+
+
+
+class RFF_Kernel(Abstract_Duovariate_Kernel):
+
+    W = None
+    b = None
+    n_transforms: int = 100
+
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        if self.api == 'cupy':
+            #self.W = cp.random.randn(self.n_transforms, x.shape[1])
+            #self.b = cp.random.randn(self.n_transforms, 1) * 2 * cp.pi
+            self.W = cp.random.randn(x.shape[1],self.n_transforms)
+            self.b = cp.random.randn(1, self.n_transforms) * 2 * cp.pi
+        else:
+            #self.W = np.random.randn(self.n_transforms, x.shape[1])
+            #self.b = np.random.randn(self.n_transforms, 1) * 2 * np.pi
+            self.W = np.random.randn(x.shape[1], self.n_transforms)
+            self.b = np.random.randn(1, self.n_transforms) * 2 * cp.pi
+
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]):
+
+        if self.api == 'cupy':
+            #Z = cp.dot(self.W, x.transpose()) + self.b
+            #A = cp.cos(Z)
+            Z = cp.dot(x, self.W) + self.b
+            A = cp.cos(Z)
+        else:
+            #Z = np.dot(self.W, x.transpose()) + self.b
+            #A = np.cos(Z)
+            Z = np.dot(x, self.W) + self.b
+            A = np.cos(Z)
+
+        return A
+
+
+    def _get_kernel_feature_names(self, f1:str, f2:str):
+        names = []
+        for i in range(self.n_transforms):
+            names.append('RFF {}'.format(i))
+
+        return names
+
+    def get_kernel_name(self) -> str:
+        return 'RFF {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
+
+    def get_kernel_type(self) -> str:
+        return 'RFF'

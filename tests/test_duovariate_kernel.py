@@ -253,3 +253,86 @@ def test_poly3_kernel_numpy():
     print(x_poly3)
 
     np.testing.assert_array_equal(x_poly3, x_exp)
+
+
+
+
+def test_RFF_kernel():
+    api = cp
+
+    x = api.array([
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [2.0, 1.0],
+        [3.0, 1.0],
+        [4.0, 1.0],
+        [4.0, -1.0],
+    ])
+
+    kernel = RFF_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_kernel = kernel.transform(x)
+
+    '''
+    x_exp = np.array([
+        [1.0, 3 * 1.0, 3 * 1.0, 1.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 2.0, 3 * 2.0 * 4.0, 8.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 1., 3 * 2.0 * 1.0, 1.0],
+        [3. * 3 * 3, 3 * 9.0 * 1.0, 3 * 3.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * 1.0, 3 * 4.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * -1.0, 3 * 4.0 * 1.0, -1.0],
+    ])
+    '''
+
+    #print('exp')
+    #print(x_exp)
+    print('result')
+    print(x_kernel)
+
+    assert len(x_kernel.shape) == 2
+    assert x_kernel.shape[0] == x.shape[0]
+    assert x_kernel.shape[1] == kernel.n_transforms
+
+
+    #np.testing.assert_array_equal(x_kernel, x_exp)
+
+
+def test_RFF_kernel_numpy():
+    api = np
+
+    x = api.array([
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [2.0, 1.0],
+        [3.0, 1.0],
+        [4.0, 1.0],
+        [4.0, -1.0],
+    ])
+
+    kernel = RFF_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_kernel = kernel.transform(x)
+
+    '''
+    x_exp = np.array([
+        [1.0, 3 * 1.0, 3 * 1.0, 1.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 2.0, 3 * 2.0 * 4.0, 8.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 1., 3 * 2.0 * 1.0, 1.0],
+        [3. * 3 * 3, 3 * 9.0 * 1.0, 3 * 3.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * 1.0, 3 * 4.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * -1.0, 3 * 4.0 * 1.0, -1.0],
+    ])
+    '''
+
+    #print('exp')
+    #print(x_exp)
+    print('result')
+    print(x_kernel)
+
+    assert len(x_kernel.shape) == 2
+    assert x_kernel.shape[0] == x.shape[0]
+    assert x_kernel.shape[1] == kernel.n_transforms

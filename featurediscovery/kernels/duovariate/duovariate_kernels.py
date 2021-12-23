@@ -66,19 +66,42 @@ class Difference_Kernel(Abstract_Duovariate_Kernel):
     def get_kernel_type(self):
         return 'Difference'
 
+magnitude_kernel_singleton = None
 class Magnitude_Kernel(Abstract_Duovariate_Kernel):
+    def __init__(self, standardizer:str):
+        super().__init__(standardizer)
+
+        global magnitude_kernel_singleton
+        if magnitude_kernel_singleton is None:
+            magnitude_kernel_singleton = cp.ElementwiseKernel(
+                'float64 x, float64 y',
+                'float64 z',
+                'z = sqrt((x * x) + (y * y))',
+                'magnitude'
+            )
+
+        self.kernel_func = magnitude_kernel_singleton
+
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        self.kernel_func = cp.ElementwiseKernel(
-            'float64 x, float64 y',
-            'float64 z',
-            'z = sqrt((x * x) + (y * y))',
-            'magnitude'
-        )
+        pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x[:,0], x[:, 1])
-        return x_ret.reshape(-1,1)
+        if self.api == 'cupy':
+            x_ret = self.kernel_func(x[:,0], x[:, 1])
+            return x_ret.reshape(-1,1)
+        else:
+            x_squared = np.multiply(x[:,0], x[:,0]) + np.multiply(x[:,1], x[:,1])
+            x_mag = np.sqrt(x_squared)
+            return x_mag.reshape(-1,1)
 
+    def _get_kernel_feature_names(self, f1: str, f2: str):
+        return ['||{},{}}}'.format(f1,f2)]
+
+    def get_kernel_name(self):
+        return 'Magnitue {} {}'.format(self.kernel_input_features[0], self.kernel_input_features[1])
+
+    def get_kernel_type(self):
+        return 'Magnitude'
 
 '''
 Probably incorrect, need to consult literature 

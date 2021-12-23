@@ -79,11 +79,11 @@ def test_magnitude_kernel():
         [4.0, -1.0],
     ])
 
-    kernel = Magnitude_Kernel()
+    kernel = Magnitude_Kernel('raw')
 
     kernel.fit(x)
 
-    x_quad = kernel.transform(x)
+    x_mag = kernel.transform(x)
 
     x_exp = cp.array([
         [np.sqrt(2.0)],
@@ -94,7 +94,36 @@ def test_magnitude_kernel():
         [np.sqrt(17.0)],
     ])
 
-    np.testing.assert_array_equal(x_quad.get(), x_exp.get())
+    np.testing.assert_array_equal(x_mag.get(), x_exp.get())
+
+
+
+def test_magnitude_kernel_numpy():
+    x = np.array([
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [2.0, 1.0],
+        [3.0, 1.0],
+        [4.0, 1.0],
+        [4.0, -1.0],
+    ])
+
+    kernel = Magnitude_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_mag = kernel.transform(x)
+
+    x_exp = np.array([
+        [np.sqrt(2.0)],
+        [np.sqrt(8.0)],
+        [np.sqrt(5.0)],
+        [np.sqrt(10.0)],
+        [np.sqrt(17.0)],
+        [np.sqrt(17.0)],
+    ])
+
+    np.testing.assert_array_equal(x_mag, x_exp)
 
 def test_gauss_kernel():
     x = cp.array([

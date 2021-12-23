@@ -29,20 +29,42 @@ def get_duo_kernel(kernel_name:str, standardizer:str) -> Abstract_Duovariate_Ker
         return Magnitude_Kernel(standardizer)
 
 
+difference_kernel_singleton = None
 class Difference_Kernel(Abstract_Duovariate_Kernel):
 
+    def __init__(self, standardizer:str):
+        super().__init__(standardizer)
+
+        global difference_kernel_singleton
+        if difference_kernel_singleton is None:
+            difference_kernel_singleton = cp.ElementwiseKernel(
+                'float64 x, float64 y',
+                'float64 z',
+                'z = x - y',
+                'difference'
+            )
+
+        self.kernel_func = difference_kernel_singleton
+
+
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        self.kernel_func = cp.ElementwiseKernel(
-            'float64 x, float64 y',
-            'float64 z',
-            'z = x - y',
-            'difference'
-        )
+        pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x[:,0], x[:, 1])
-        return x_ret.reshape(-1,1)
+        if self.api == 'cupy':
+            x_ret = self.kernel_func(x[:,0], x[:, 1])
+            return x_ret.reshape(-1,1)
+        else:
+            return (x[:,0] - x[:,1]).reshape(-1,1)
 
+    def _get_kernel_feature_names(self, f1: str, f2: str):
+        return ['{} - {}'.format(f1,f2)]
+
+    def get_kernel_name(self):
+        return 'Difference {} {}'.format(self.kernel_input_features[0], self.kernel_input_features[1])
+
+    def get_kernel_type(self):
+        return 'Difference'
 
 class Magnitude_Kernel(Abstract_Duovariate_Kernel):
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):

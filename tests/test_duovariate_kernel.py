@@ -13,9 +13,10 @@ def test_diff_kernel():
         [3.0, 1.0],
         [4.0, 1.0],
         [4.0, -1.0],
+        [3.0, 2.0]
     ])
 
-    kernel = Difference_Kernel()
+    kernel = Difference_Kernel('raw')
 
     kernel.fit(x)
 
@@ -28,9 +29,43 @@ def test_diff_kernel():
         [2.0],
         [3.0],
         [5.0],
+        [1.0]
     ])
 
     np.testing.assert_array_equal(x_quad.get(), x_exp.get())
+
+
+    #test kernel with numpy implementation
+
+def test_diff_kernel_numpy():
+    x = np.array([
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [2.0, 1.0],
+        [3.0, 1.0],
+        [4.0, 1.0],
+        [4.0, -1.0],
+        [3.0, 2.0]
+    ])
+
+    kernel = Difference_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_diff = kernel.transform(x)
+
+    x_exp = np.array([
+        [0.0],
+        [0.0],
+        [1.0],
+        [2.0],
+        [3.0],
+        [5.0],
+        [1.0]
+    ])
+
+    np.testing.assert_array_equal(x_diff, x_exp)
+
 
 
 

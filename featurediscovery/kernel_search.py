@@ -204,4 +204,28 @@ def evaluate_kernels(df:pd.DataFrame
             if f in ['csv', 'json']:
                 exporter.export_kernel_ranking(kernel_list, export_folder, f)
 
+
+    #compile best performances per feature(-pair)
+
+    best_kernel_per_feature_combination = {}
+    for k in kernel_list:
+        if not str(k.kernel_input_features) in best_kernel_per_feature_combination.keys():
+            best_kernel_per_feature_combination[str(k.kernel_input_features)] = k
+        else:
+            if k.kernel_quality > best_kernel_per_feature_combination[str(k.kernel_input_features)].kernel_quality:
+                best_kernel_per_feature_combination[(k.kernel_input_features)] = k
+
+
+    best_kernel_per_feature_combination_list = best_kernel_per_feature_combination.values()
+    best_kernel_per_feature_combination_list = \
+        list(best_kernel_per_feature_combination_list)
+    best_kernel_per_feature_combination_list.sort(key=lambda x: x.kernel_quality, reverse=True)
+
+    if plot_ranking or export_ranking and 'png' in export_formats:
+        plotter.plot_ranking(best_kernel_per_feature_combination_list
+                             , to_file=export_ranking
+                             , export_folder=export_folder
+                             , to_screen=plot_ranking
+                             , suffix='-per feature')
+
     return kernel_list

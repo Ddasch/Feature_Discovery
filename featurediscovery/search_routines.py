@@ -526,7 +526,7 @@ def _generic(df:pd.DataFrame
         if search_method == 'naive':
             model_input_feature_names = kernel.get_kernel_feature_names(kernel_input_feature_names)
         if search_method == 'full':
-            model_input_feature_names = feature_space
+            model_input_feature_names = feature_space.copy()
             for f in kernel.get_kernel_feature_names(kernel_input_feature_names):
                 model_input_feature_names.append(f)
 

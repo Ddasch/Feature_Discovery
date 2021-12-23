@@ -8,6 +8,7 @@ from featurediscovery.kernels.abstract_kernel import Abstract_Kernel
 def export_kernel_ranking(kernel_list:List[Abstract_Kernel]
                           , export_folder:str
                           , export_format:str
+                          , suffix:str = ''
                           ):
 
     if export_folder is None:
@@ -40,7 +41,7 @@ def export_kernel_ranking(kernel_list:List[Abstract_Kernel]
     df = pd.DataFrame(data=dict_list)
 
     if export_format == 'csv':
-        df.to_csv('{folder}/performances.csv'.format(folder=export_folder), index=False)
+        df.to_csv('{folder}/performances{suffix}.csv'.format(folder=export_folder, suffix=suffix), index=False)
 
     if export_format == 'json':
-        df.to_json('{folder}/performances.json'.format(folder=export_folder), orient='records', indent=2)
+        df.to_json('{folder}/performances{suffix}.json'.format(folder=export_folder, suffix=suffix), orient='records', indent=2)

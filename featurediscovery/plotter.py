@@ -253,6 +253,7 @@ def plot_ranking(kernel_list:List[Abstract_Kernel]
                  , to_screen: bool = True
                  , to_file: bool = False
                  , export_folder: str = False
+                 , suffix:str = ''
                  ):
 
     if to_file and export_folder is None:
@@ -281,11 +282,11 @@ def plot_ranking(kernel_list:List[Abstract_Kernel]
     ax.set_yticks(y_pos)
     ax.set_yticklabels(labels=kernel_names, fontdict={'fontsize': 8})
     ax.set_xlabel('Performance')
-    ax.set_title('Kernel Quality Ranking')
+    ax.set_title('Kernel Quality Ranking {}'.format(suffix))
     plt.tight_layout()
 
     if to_file:
-        filename = 'performance_ranking.png'
+        filename = 'performance_ranking{}.png'
         full_path = '{export_folder}/{filename}'.format(export_folder=export_folder, filename=filename)
 
         fig.savefig(full_path)

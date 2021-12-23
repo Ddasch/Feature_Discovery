@@ -198,11 +198,11 @@ def test_poly3_kernel():
         [4.0, -1.0],
     ])
 
-    kernel = Polynomial_Third_Order_Kernel()
+    kernel = Polynomial_Third_Order_Kernel('raw')
 
     kernel.fit(x)
 
-    x_quad = kernel.transform(x)
+    x_poly3 = kernel.transform(x)
 
     x_exp = cp.array([
         [1.0, 3 * 1.0, 3 * 1.0, 1.0],
@@ -216,6 +216,40 @@ def test_poly3_kernel():
     print('exp')
     print(x_exp)
     print('result')
-    print(x_quad)
+    print(x_poly3)
 
-    np.testing.assert_array_equal(x_quad.get(), x_exp.get())
+    np.testing.assert_array_equal(x_poly3.get(), x_exp.get())
+
+
+
+def test_poly3_kernel_numpy():
+    x = np.array([
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [2.0, 1.0],
+        [3.0, 1.0],
+        [4.0, 1.0],
+        [4.0, -1.0],
+    ])
+
+    kernel = Polynomial_Third_Order_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_poly3 = kernel.transform(x)
+
+    x_exp = np.array([
+        [1.0, 3 * 1.0, 3 * 1.0, 1.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 2.0, 3 * 2.0 * 4.0, 8.0],
+        [2.0 * 2 * 2, 3 * 4.0 * 1., 3 * 2.0 * 1.0, 1.0],
+        [3. * 3 * 3, 3 * 9.0 * 1.0, 3 * 3.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * 1.0, 3 * 4.0 * 1.0, 1.0],
+        [4. * 4 * 4, 3 * 16.0 * -1.0, 3 * 4.0 * 1.0, -1.0],
+    ])
+
+    print('exp')
+    print(x_exp)
+    print('result')
+    print(x_poly3)
+
+    np.testing.assert_array_equal(x_poly3, x_exp)

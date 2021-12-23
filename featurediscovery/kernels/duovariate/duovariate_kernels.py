@@ -127,23 +127,38 @@ class Gaussian_Kernel(Abstract_Duovariate_Kernel):
         return x_ret.reshape(-1,1)
 
 
-
+polynomial_3_singleton = None
 class Polynomial_Third_Order_Kernel(Abstract_Duovariate_Kernel):
 
     kernel_func = None
+    def __init__(self, standardizer:str):
+        super().__init__(standardizer)
+        global polynomial_3_singleton
+        if polynomial_3_singleton is None:
+            polynomial_3_singleton = cp.ElementwiseKernel(
+                'float64 x1, float64 x2',
+                'float64 y1, float64 y2, float64 y3, float64 y4',
+                'y1 = x1*x1*x1, y2=3*x1*x1*x2, y3=3*x1*x2*x2, y4=x2*x2*x2',
+                'poly_third'
+            )
+
+        self.kernel_func = polynomial_3_singleton
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
-        self.kernel_func = cp.ElementwiseKernel(
-            'float64 x1, float64 x2',
-            'float64 y1, float64 y2, float64 y3, float64 y4',
-            'y1 = x1*x1*x1, y2=3*x1*x1*x2, y3=3*x1*x2*x2, y4=x2*x2*x2',
-            'poly_third'
-        )
+        pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x[:, 0], x[:, 1])
-        x_ret = cp.column_stack(x_ret)
-        return x_ret
+        if self.api == 'cupy':
+            x_ret = self.kernel_func(x[:, 0], x[:, 1])
+            x_ret = cp.column_stack(x_ret)
+            return x_ret
+        else:
+            x_f1_3 = np.multiply(np.multiply(x[:, 0],x[:, 0]), x[:, 0])
+            x_3_f1_2_f2 = 3 * np.multiply(np.multiply(x[:, 0], x[:, 0]), x[:, 1])
+            x_3_f1_f2_2 = 3 * np.multiply(np.multiply(x[:, 0], x[:, 1]), x[:, 1])
+            x_f2_3 = np.multiply(np.multiply(x[:, 1], x[:, 1]), x[:, 1])
+            x_ret = np.column_stack((x_f1_3,x_3_f1_2_f2,x_3_f1_f2_2,x_f2_3))
+            return x_ret
 
     def _get_kernel_feature_names(self, f1:str, f2:str):
         return ['{}^3'.format(f1)

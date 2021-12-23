@@ -13,7 +13,10 @@ def get_scaler(scaler_name:str) -> Abstract_Standardizer:
     if scaler_name is not None and scaler_name not in SUPPORTED_STANDARDIZERS:
         raise Exception('Unsupported standardizer: {}'.format(scaler_name))
 
-    if scaler_name in ['Dummy', 'dummy', 'none', 'None', 'raw'] or scaler_name is None:
+    if scaler_name is None:
+        raise Exception('Must provide standardizer name')
+
+    if scaler_name in ['Dummy', 'dummy', 'none', 'None', 'raw']:
         return Dummy_Standardizer()
 
     if scaler_name in ['Mean', 'mean', 'centralized']:

@@ -284,10 +284,10 @@ class Log_Kernel(Abstract_Monovariate_Kernel):
 
 
     def get_kernel_name(self):
-        return 'Shifted Log {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
+        return 'Log {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
 
     def _get_kernel_feature_names(self, f1):
-        return ['shift_log(' +f1 + ')']
+        return ['log(' +f1 + ')']
 
     def get_kernel_type(self) -> str:
-        return 'Shifted Log'
+        return 'Log'

@@ -296,7 +296,7 @@ class RFF_Kernel(Abstract_Duovariate_Kernel):
             #self.W = np.random.randn(self.n_transforms, x.shape[1])
             #self.b = np.random.randn(self.n_transforms, 1) * 2 * np.pi
             self.W = np.random.randn(x.shape[1], self.n_transforms)
-            self.b = np.random.randn(1, self.n_transforms) * 2 * cp.pi
+            self.b = np.random.randn(1, self.n_transforms) * 2 * np.pi
 
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):

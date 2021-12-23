@@ -260,3 +260,34 @@ class Shifted_Log_Kernel(Abstract_Monovariate_Kernel):
 
     def get_kernel_type(self) -> str:
         return 'Shifted Log'
+
+
+class Log_Kernel(Abstract_Monovariate_Kernel):
+    kernel_func = None
+    epsilon = 0.0001
+
+    def __init__(self, standardizer: str):
+        super().__init__(standardizer)
+
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]):
+
+        if self.api == 'cupy':
+            x_ret = cp.maximum(x, cp.ones(x.shape)*self.epsilon)
+            x_ret = cp.log(x_ret)
+        else:
+            x_ret = np.maximum(x, np.ones(x.shape)*self.epsilon)
+            x_ret = np.log(x_ret)
+        return x_ret
+
+
+    def get_kernel_name(self):
+        return 'Shifted Log {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
+
+    def _get_kernel_feature_names(self, f1):
+        return ['shift_log(' +f1 + ')']
+
+    def get_kernel_type(self) -> str:
+        return 'Shifted Log'

@@ -135,3 +135,69 @@ def test_log_kernel_numpy():
 
     np.testing.assert_array_equal(x_kernel, x_exp)
 
+
+
+def test_log_kernel_unshifted():
+    api = cp
+
+    x = api.array([
+        [0.0, 0.0],
+        [1.0, -1.0],
+        [2.0, -2.0],
+        [3.0, -3.0],
+        [4.0, -4.0],
+        [5.0, -5.0],
+        [6.0, -6.0],
+    ])
+
+    kernel = Log_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_kernel = kernel.transform(x)
+
+    epsilon = Log_Kernel.epsilon
+    x_exp = cp.array([
+        [api.log(epsilon), api.log(epsilon)],
+        [api.log(1.0), api.log(epsilon)],
+        [api.log(2.0), api.log(epsilon)],
+        [api.log(3.0), api.log(epsilon)],
+        [api.log(4.0), api.log(epsilon)],
+        [api.log(5.0), api.log(epsilon)],
+        [api.log(6.0), api.log(epsilon)],
+    ])
+
+    np.testing.assert_array_equal(x_kernel.get(), x_exp.get())
+
+
+def test_log_kernel_unshifted_numpy():
+    api = np
+
+    x = api.array([
+        [0.0, 0.0],
+        [1.0, -1.0],
+        [2.0, -2.0],
+        [3.0, -3.0],
+        [4.0, -4.0],
+        [5.0, -5.0],
+        [6.0, -6.0],
+    ])
+
+    kernel = Log_Kernel('raw')
+
+    kernel.fit(x)
+
+    x_kernel = kernel.transform(x)
+
+    epsilon = Log_Kernel.epsilon
+    x_exp = cp.array([
+        [api.log(epsilon), api.log(epsilon)],
+        [api.log(1.0), api.log(epsilon)],
+        [api.log(2.0), api.log(epsilon)],
+        [api.log(3.0), api.log(epsilon)],
+        [api.log(4.0), api.log(epsilon)],
+        [api.log(5.0), api.log(epsilon)],
+        [api.log(6.0), api.log(epsilon)],
+    ])
+
+    np.testing.assert_array_equal(x_kernel, x_exp)

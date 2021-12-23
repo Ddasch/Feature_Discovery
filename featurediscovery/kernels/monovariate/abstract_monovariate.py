@@ -13,10 +13,14 @@ class Abstract_Monovariate_Kernel(Abstract_Kernel):
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
         super().fit(x)
 
-    def transform(self, x: Union[np.ndarray, cp.ndarray], suppres_warning:bool=False) -> np.ndarray:
+    def transform(self, x: Union[np.ndarray, cp.ndarray], suppres_warning:bool=False) -> Union[np.ndarray, cp.ndarray]:
         if x.shape[1] > 1 and not suppres_warning:
             print('WARNING - Executing monovariate kernel on multiple features. Applying kernel on every feature separately..' )
-        return super().transform(x)
+
+        x_ret = super().transform(x)
+        assert x_ret.shape[0] == x.shape[0]
+        assert x_ret.shape[1] == x.shape[1]
+        return x_ret
 
     def finalize(self, quality:float, kernel_input_features:List[str], model_input_features:List[str]
                  , x_decision_boundary: Union[np.ndarray, cp.ndarray]

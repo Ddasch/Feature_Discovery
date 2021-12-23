@@ -29,21 +29,27 @@ def get_mono_kernel(name:str, standardizer:str) -> Abstract_Monovariate_Kernel:
 
 
 quadratic_cupy_kernel_singleton = None
-
 class Quadratic_Kernel(Abstract_Monovariate_Kernel):
 
     kernel_func = None
-    #'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
-    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+
+    def __init__(self, standardizer:str):
+        super().__init__(standardizer)
         global quadratic_cupy_kernel_singleton
         if quadratic_cupy_kernel_singleton is None:
             quadratic_cupy_kernel_singleton = cp.ElementwiseKernel(
-            'float64 x',
-            'float64 y',
-            'y = x*x',
-            'quadratic'
+                'float64 x',
+                'float64 y',
+                'y = x*x',
+                'quadratic'
             )
         self.kernel_func = quadratic_cupy_kernel_singleton
+
+
+
+    #'y0 = exp(-1* (1/(2*1*1)) * x * x) * 1, y1 = exp(-1* (1/(2*1*1)) * x * x) * sqrt(((2*(1/(2*1*1))) / 1)) *  x'
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
         use_cupy = type(x) == cp.ndarray
@@ -220,3 +226,37 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
 
     def get_kernel_type(self) -> str:
         return 'sigmoid'
+
+
+
+
+class Shifted_Log_Kernel(Abstract_Monovariate_Kernel):
+    kernel_func = None
+    minima = None
+    epsilon = 0.0001
+
+    def __init__(self, standardizer: str):
+        super().__init__(standardizer)
+
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        self.minima = x.min(axis=0)
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]):
+
+        if self.api == 'cupy':
+            x_ret = x - self.minima + self.epsilon
+            x_ret = cp.log(x_ret)
+        else:
+            x_ret = x - self.minima + self.epsilon
+            x_ret = np.log(x_ret)
+        return x_ret
+
+
+    def get_kernel_name(self):
+        return 'Shifted Log {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())
+
+    def _get_kernel_feature_names(self, f1):
+        return ['shift_log(' +f1 + ')']
+
+    def get_kernel_type(self) -> str:
+        return 'Shifted Log'

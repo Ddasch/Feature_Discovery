@@ -286,7 +286,7 @@ def plot_ranking(kernel_list:List[Abstract_Kernel]
     plt.tight_layout()
 
     if to_file:
-        filename = 'performance_ranking{}.png'
+        filename = 'performance_ranking{}.png'.format(suffix)
         full_path = '{export_folder}/{filename}'.format(export_folder=export_folder, filename=filename)
 
         fig.savefig(full_path)

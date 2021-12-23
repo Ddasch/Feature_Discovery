@@ -32,6 +32,7 @@ def export_kernel_ranking(kernel_list:List[Abstract_Kernel]
     for kernel in kernel_list:
         d = {
             'Specific Kernel': kernel.get_kernel_name(),
+            'Input': str(kernel.kernel_input_features),
             'Type' : kernel.get_kernel_type(),
             'Standardizer': kernel.standardizer.get_standardizer_name(),
             'Performance': kernel.kernel_quality

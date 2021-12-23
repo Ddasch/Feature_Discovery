@@ -215,9 +215,9 @@ def test_to_csv_performances():
     kernel_search.evaluate_kernels(df
                                    , feature_space=['x1', 'x2', 'x3']
                                    , target_variable='y'
-                                   #, monovariate_kernels=['quadratic']
+                                   , monovariate_kernels=['quadratic']
                                    , duovariate_kernels=['poly2']
-                                   , feature_standardizers=['raw']
+                                   , feature_standardizers=['raw', 'centralized', 'standard']
                                    , eval_method='full'
                                    , use_cupy='no'
                                    , plot_ranking=False

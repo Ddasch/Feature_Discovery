@@ -199,7 +199,7 @@ def evaluate_kernels(df:pd.DataFrame
                      , export_folder=export_folder
                      )
 
-    if export_formats is not None:
+    if export_formats is not None and export_ranking:
         for f in export_formats:
             if f in ['csv', 'json']:
                 exporter.export_kernel_ranking(kernel_list, export_folder, f)
@@ -227,5 +227,14 @@ def evaluate_kernels(df:pd.DataFrame
                              , export_folder=export_folder
                              , to_screen=plot_ranking
                              , suffix='-per feature')
+
+    if export_formats is not None and export_ranking:
+        for f in export_formats:
+            if f in ['csv', 'json']:
+                exporter.export_kernel_ranking(best_kernel_per_feature_combination_list
+                                               , export_folder=export_folder
+                                               , export_format=f
+                                               , suffix='-per feature')
+
 
     return kernel_list

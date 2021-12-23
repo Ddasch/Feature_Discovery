@@ -131,3 +131,6 @@ dmypy.json
 .idea/
 .idea/*
 .tests/test_output/*
+tests/test_output/performances.csv
+tests/test_output/performances-per feature.csv
+tests/test_output/*

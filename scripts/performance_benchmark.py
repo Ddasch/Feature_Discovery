@@ -142,7 +142,7 @@ def benchmark_dim_scaling(n_test:int = 1):
 
     # test 3
     n_sample = 100
-    n_dim = 25
+    n_dim = 20
     df = get_test_dataset(n_sample, n_dim)
     current_cpu_time, current_gpu_time = benchmark(df, n_test=n_test)
     labels.append('d={}'.format(n_dim))
@@ -152,13 +152,14 @@ def benchmark_dim_scaling(n_test:int = 1):
   
     # test 4
     n_sample = 100
-    n_dim = 50
+    n_dim = 30
     df = get_test_dataset(n_sample, n_dim)
     current_cpu_time, current_gpu_time = benchmark(df, n_test=n_test)
     labels.append('d={}'.format(n_dim))
     t_cpu.append(current_cpu_time)
     t_gpu.append(current_gpu_time)
 
+    '''
     # test 5
     n_sample = 100
     n_dim = 100
@@ -167,7 +168,7 @@ def benchmark_dim_scaling(n_test:int = 1):
     labels.append('d={}'.format(n_dim))
     t_cpu.append(current_cpu_time)
     t_gpu.append(current_gpu_time)
-
+    '''
 
 
     #make a bar plot of the performances

@@ -23,6 +23,7 @@ def _search(df:pd.DataFrame
             , duovariate_kernels: List[str] = None
             , feature_standardizers:List[str] = None
             , use_cupy:str = 'auto'
+            , compute_decision_boundary:bool=False
             ) -> List[Abstract_Kernel]:
 
     #check df columns
@@ -168,6 +169,7 @@ def evaluate_kernels(df:pd.DataFrame
             , export_ranking: bool = False
             , export_formats: List[str] = None
             , export_individual_kernel_plots: bool = False
+            , compute_decision_boundary:bool=False
          ) -> List[Abstract_Kernel]:
 
     kernel_list = _search(df=df
@@ -178,6 +180,7 @@ def evaluate_kernels(df:pd.DataFrame
                           , monovariate_kernels=monovariate_kernels
                           , duovariate_kernels=duovariate_kernels
                           , feature_standardizers=feature_standardizers
+                          , compute_decision_boundary=compute_decision_boundary
                           , use_cupy=use_cupy)
 
 

@@ -12,9 +12,9 @@ from featurediscovery.kernels.duovariate.duovariate_kernels import Sigmoid_Kerne
 class SigmoidActivation(AbstractActivation):
 
     def __init__(self):
-        self.sigmoid_kernel = Sigmoid_Kernel('dummy')
+        self.sigmoid_kernel = Sigmoid_Kernel('raw')
 
-        self.sigmoid_kernel_backwards = Sigmoid_Kernel_Backwards(standardizer=None)
+        self.sigmoid_kernel_backwards = Sigmoid_Kernel_Backwards(standardizer='raw')
 
     def activation_forward(self, Z:cp.ndarray):
         #return 1/(1 + cp.exp(-1*Z))

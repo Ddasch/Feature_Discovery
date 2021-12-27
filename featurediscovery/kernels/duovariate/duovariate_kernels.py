@@ -296,8 +296,7 @@ class RFF_Kernel(Abstract_Duovariate_Kernel):
             #self.W = np.random.randn(self.n_transforms, x.shape[1])
             #self.b = np.random.randn(self.n_transforms, 1) * 2 * np.pi
             self.W = np.random.randn(x.shape[1], self.n_transforms)
-            #self.b = np.random.randn(1, self.n_transforms) * 2 * np.pi
-            self.b = np.random.uniform(1, self.n_transforms) * 2 * np.pi
+            self.b = np.random.randn(1, self.n_transforms) * 2 * np.pi
 
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
@@ -383,12 +382,12 @@ class RFF_Kernel_Gauss_Approx(Abstract_Duovariate_Kernel):
     def _get_kernel_feature_names(self, f1:str, f2:str):
         names = []
         for i in range(self.n_transforms):
-            names.append('RFF {}'.format(i))
+            names.append('RFF Gauss Approx {}'.format(i))
 
         return names
 
     def get_kernel_name(self) -> str:
-        return 'RFF {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
+        return 'RFF Gauss Approx {x1} {x2} {std}'.format(x1=self.kernel_input_features[0], x2=self.kernel_input_features[1], std=self.standardizer.get_standardizer_name())
 
     def get_kernel_type(self) -> str:
-        return 'RFF'
+        return 'RFF Gauss Approx '

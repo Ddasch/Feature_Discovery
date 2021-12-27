@@ -292,6 +292,7 @@ def test_full_duovariate_cupy():
 
     results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
                                     duovariate_kernels=['poly2'],
+                                    feature_standardizers=['raw'],
                                     eval_method='full', use_cupy='yes')
 
     assert results is not None
@@ -331,6 +332,7 @@ def test_full_duovariate_numpy():
 
     results = kernel_search._search(df, feature_space=['x1', 'x2', 'x3'], target_variable='y',
                                     duovariate_kernels=['poly2'],
+                                    feature_standardizers=['raw'],
                                     eval_method='full', use_cupy='no')
 
     assert results is not None

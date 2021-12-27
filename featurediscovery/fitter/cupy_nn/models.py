@@ -130,12 +130,14 @@ class ANN():
         '''
 
         if X.shape[0] > X.shape[1]:
-            print(
-                'WARNING: X with shape {} has more features than samples. Expected input shape is [n_input_features, n_samples]. Perhaps it needs to be transposed?'.format(X.shape))
+            pass
+            #print(
+            #    'WARNING: X with shape {} has more features than samples. Expected input shape is [n_input_features, n_samples]. Perhaps it needs to be transposed?'.format(X.shape))
 
         if Y.shape[0] > Y.shape[1]:
-            print(
-                'WARNING: y with shape {} has more outputs than samples. Expected input shape is [n_outputs, n_samples]. Perhaps it needs to be transposed?'.format(Y.shape))
+            pass
+            #print(
+            #    'WARNING: y with shape {} has more outputs than samples. Expected input shape is [n_outputs, n_samples]. Perhaps it needs to be transposed?'.format(Y.shape))
 
         self.layers = []
 

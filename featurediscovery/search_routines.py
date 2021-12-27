@@ -16,6 +16,7 @@ def naive_monovariate(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
                       , feature_space:List[str]
+                      , compute_decision_boundary:bool=False
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
 
     #if use_cupy:
@@ -23,13 +24,15 @@ def naive_monovariate(df:pd.DataFrame
     #else:
     #    return _naive_monovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
-                    use_cupy=use_cupy, search_method='naive', kernel_type='monovariate')
+                    use_cupy=use_cupy, search_method='naive', kernel_type='monovariate',
+                    compute_decision_boundary=compute_decision_boundary)
 
 
 def full_monovariate(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
                       , feature_space:List[str]
+                      , compute_decision_boundary:bool=False
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
 
     #if use_cupy:
@@ -37,25 +40,29 @@ def full_monovariate(df:pd.DataFrame
     #else:
     #    return _full_monovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
-                    use_cupy=use_cupy, search_method='full', kernel_type='monovariate')
+                    use_cupy=use_cupy, search_method='full', kernel_type='monovariate',
+                    compute_decision_boundary=compute_decision_boundary)
 
 def naive_duovariate(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
                       , feature_space:List[str]
+                      , compute_decision_boundary: bool = False
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
     #if use_cupy:
     #    return _naive_duovariate_cupy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     #else:
     #    return _naive_duovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
-                    use_cupy=use_cupy, search_method='naive', kernel_type='duovariate')
+                    use_cupy=use_cupy, search_method='naive', kernel_type='duovariate',
+                    compute_decision_boundary=compute_decision_boundary)
 
 
 def full_duovariate(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
                       , feature_space:List[str]
+                      , compute_decision_boundary: bool = False
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
     #if use_cupy:
     #    return _full_duovariate_cupy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
@@ -63,7 +70,8 @@ def full_duovariate(df:pd.DataFrame
     #    return _full_duovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
 
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
-                    use_cupy=use_cupy, search_method='full', kernel_type='duovariate')
+                    use_cupy=use_cupy, search_method='full', kernel_type='duovariate',
+                    compute_decision_boundary=compute_decision_boundary)
 
 
 '''
@@ -457,6 +465,7 @@ def _generic(df:pd.DataFrame
                       , quality_metric:str='IG_Gini'
                       , search_method:str='naive'
                       , kernel_type:str='monovariate'
+                      , compute_decision_boundary:bool=False
              , use_cupy:bool=False) -> List[Abstract_Kernel]:
 
 
@@ -519,7 +528,11 @@ def _generic(df:pd.DataFrame
             fit_quality = fit_quality - fit_quality_pre_kernel
 
         # estimate decision boundary
-        x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_final)
+        if compute_decision_boundary:
+            x_decision_boundary, y_decision_boundary = fitter.compute_decision_boundary_samples(X_final)
+        else:
+            x_decision_boundary = None
+            y_decision_boundary = None
 
         # finalize result in kernel
         # depending on search method, construct input space for model

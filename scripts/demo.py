@@ -8,12 +8,12 @@ def generate_demo_dataset(no_samples:int):
 
 
     # Engineer a 2nd order polynomial solution
-    x1 = np.random.uniform(0, 10, no_samples)
-    x2 = np.random.uniform(0, 10, no_samples)
+    x1 = np.random.uniform(-10, 10, no_samples)
+    x2 = np.random.uniform(-10, 10, no_samples)
 
-    poly2 = x1*x1 + 10*x1*x2
+    poly2 = 0.1*x1*x1 - 10*x1*x2 + 2*x2*x2
     y_poly2 = np.zeros(no_samples)
-    y_poly2[poly2 > 40] = 0.6
+    y_poly2[poly2 > 100] = 0.6
 
     #add some noise to pattern
     #x1 = x1 + np.random.randn(no_samples)
@@ -34,9 +34,9 @@ def generate_demo_dataset(no_samples:int):
 
 
     # engineer some random noise features
-    x_noise1 = np.random.randn(no_samples, 3)
-    x_noise2 = np.random.randn(no_samples, 3)
-    x_noise3 = np.random.randn(no_samples, 3)
+    x_noise1 = np.random.uniform(-10, 10, (no_samples, 3))
+    x_noise2 = np.random.uniform(-10, 10, (no_samples, 3))
+    x_noise3 = np.random.uniform(-10, 10, (no_samples, 3))
 
     #create dataframe with the random data
     data = {}
@@ -88,12 +88,12 @@ if __name__ == '__main__':
     evaluate_kernels(df
                      , target_variable='y'
                      , feature_space=feature_space
-                     , monovariate_kernels=['quadratic', 'log', 'log_shift']
+                     , monovariate_kernels=None
                      , duovariate_kernels=['poly2', 'poly3']
                      , feature_standardizers=['raw']
                      , plot_ranking=True
-                     , eval_method='naive'
-                     , use_cupy='yes'
+                     , eval_method='full'
+                     , use_cupy='no'
                      )
 
 

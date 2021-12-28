@@ -462,7 +462,7 @@ def _generic(df:pd.DataFrame
                       , search_dicts:List[dict]
                       , target_variable:str
                       , feature_space:List[str]
-                      , quality_metric:str='IG_Gini'
+                      , quality_metric:str='acc'
                       , search_method:str='naive'
                       , kernel_type:str='monovariate'
                       , compute_decision_boundary:bool=False

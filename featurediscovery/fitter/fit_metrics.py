@@ -3,6 +3,7 @@ from typing import Union, List
 
 import cupy as cp
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 from featurediscovery.fitter.abstract_fit_quality import Fit_Quality_Metric
 
@@ -32,6 +33,9 @@ class IG_Gini(Fit_Quality_Metric):
             post_fit_ginis = cp.array(post_fit_ginis)
             post_fit_sample_sizes = cp.array(post_fit_sample_sizes)
             weighted_average_post_fit_gini = cp.average(post_fit_ginis, weights=post_fit_sample_sizes / cp.sum(post_fit_sample_sizes))
+
+            weighted_average_post_fit_gini = weighted_average_post_fit_gini.get()
+            pre_fit_gini = pre_fit_gini
         else:
             post_fit_ginis = np.array(post_fit_ginis)
             post_fit_sample_sizes = np.array(post_fit_sample_sizes)
@@ -39,6 +43,20 @@ class IG_Gini(Fit_Quality_Metric):
                                                         weights=post_fit_sample_sizes / np.sum(post_fit_sample_sizes))
 
         return pre_fit_gini - weighted_average_post_fit_gini
+
+
+
+class Accuracy(Fit_Quality_Metric):
+
+    def score_fit_quality(self, y: Union[np.ndarray, cp.ndarray]
+                          , y_hat: Union[np.ndarray, cp.ndarray]):
+        use_cupy = type(y) == cp.ndarray
+
+        if use_cupy:
+            y = y.get()
+            y_hat = y_hat.get()
+
+        return accuracy_score(y,y_hat)
 
 
 

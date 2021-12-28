@@ -13,11 +13,14 @@ class Abstract_Fitter(ABC):
 
     def __init__(self, fit_metric:str):
 
-        if fit_metric not in ['IG_Gini']:
+        if fit_metric not in ['IG_Gini', 'acc']:
             raise Exception('unsupported metric {}'.format(fit_metric))
 
         if fit_metric == 'IG_Gini':
             self.fit_metric = IG_Gini()
+
+        if fit_metric == 'acc':
+            self.fit_metric = Accuracy()
 
 
 

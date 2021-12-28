@@ -210,16 +210,19 @@ def evaluate_kernels(df:pd.DataFrame
 
     #compile best performances per feature(-pair)
 
-    best_kernel_per_feature_combination = {}
+    best_kernel_per_feature = {}
     for k in kernel_list:
-        if not str(k.kernel_input_features) in best_kernel_per_feature_combination.keys():
-            best_kernel_per_feature_combination[str(k.kernel_input_features)] = k
-        else:
-            if k.kernel_quality > best_kernel_per_feature_combination[str(k.kernel_input_features)].kernel_quality:
-                best_kernel_per_feature_combination[(k.kernel_input_features)] = k
+
+        for kernel_feature in k.kernel_input_features:
+
+            if not kernel_feature in best_kernel_per_feature.keys():
+                best_kernel_per_feature[kernel_feature] = k
+            else:
+                if k.kernel_quality > best_kernel_per_feature[kernel_feature].kernel_quality:
+                    best_kernel_per_feature[kernel_feature] = k
 
 
-    best_kernel_per_feature_combination_list = best_kernel_per_feature_combination.values()
+    best_kernel_per_feature_combination_list = best_kernel_per_feature.values()
     best_kernel_per_feature_combination_list = \
         list(best_kernel_per_feature_combination_list)
     best_kernel_per_feature_combination_list.sort(key=lambda x: x.kernel_quality, reverse=True)
@@ -229,7 +232,7 @@ def evaluate_kernels(df:pd.DataFrame
                              , to_file=export_ranking
                              , export_folder=export_folder
                              , to_screen=plot_ranking
-                             , suffix='-per feature')
+                             , suffix='- per feature')
 
     if export_formats is not None and export_ranking:
         for f in export_formats:

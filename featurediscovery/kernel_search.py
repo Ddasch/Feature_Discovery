@@ -24,6 +24,7 @@ def _search(df:pd.DataFrame
             , feature_standardizers:List[str] = None
             , use_cupy:str = 'auto'
             , compute_decision_boundary:bool=False
+            , fit_metric:str = 'acc'
             ) -> List[Abstract_Kernel]:
 
     #check df columns
@@ -129,9 +130,11 @@ def _search(df:pd.DataFrame
     if len(mono_kernel_dicts) > 0:
         if eval_method == 'naive':
             mono_results = naive_monovariate(df=df, search_dicts=mono_kernel_dicts, feature_space=feature_space
+                                             , fit_metric=fit_metric
                                              , target_variable=target_variable, use_cupy=use_cupy)
         else:
             mono_results = full_monovariate(df=df, search_dicts=mono_kernel_dicts, feature_space=feature_space
+                                            , fit_metric=fit_metric
                                             , target_variable=target_variable, use_cupy=use_cupy)
 
         for kernel in mono_results:
@@ -140,9 +143,11 @@ def _search(df:pd.DataFrame
     if len(duo_kernel_dicts) > 0:
         if eval_method == 'naive':
             duo_results = naive_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
+                                            , fit_metric=fit_metric
                                              , target_variable=target_variable, use_cupy=use_cupy)
         else:
             duo_results = full_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
+                                           , fit_metric=fit_metric
                                            , target_variable=target_variable, use_cupy=use_cupy)
 
         for kernel in duo_results:
@@ -170,6 +175,7 @@ def evaluate_kernels(df:pd.DataFrame
             , export_formats: List[str] = None
             , export_individual_kernel_plots: bool = False
             , compute_decision_boundary:bool=False
+            , fit_metric:str = 'acc'
          ) -> List[Abstract_Kernel]:
 
     kernel_list = _search(df=df
@@ -212,7 +218,6 @@ def evaluate_kernels(df:pd.DataFrame
 
     best_kernel_per_feature = {}
     for k in kernel_list:
-
         for kernel_feature in k.kernel_input_features:
 
             if not kernel_feature in best_kernel_per_feature.keys():
@@ -222,17 +227,17 @@ def evaluate_kernels(df:pd.DataFrame
                     best_kernel_per_feature[kernel_feature] = k
 
 
-    best_kernel_per_feature_combination_list = best_kernel_per_feature.values()
-    best_kernel_per_feature_combination_list = \
-        list(best_kernel_per_feature_combination_list)
-    best_kernel_per_feature_combination_list.sort(key=lambda x: x.kernel_quality, reverse=True)
-
     if plot_ranking or export_ranking and 'png' in export_formats:
-        plotter.plot_ranking(best_kernel_per_feature_combination_list
+        plotter.plot_highlights(best_kernel_per_feature
                              , to_file=export_ranking
                              , export_folder=export_folder
                              , to_screen=plot_ranking
                              , suffix='- per feature')
+
+    best_kernel_per_feature_combination_list = best_kernel_per_feature.values()
+    best_kernel_per_feature_combination_list = \
+        list(best_kernel_per_feature_combination_list)
+    best_kernel_per_feature_combination_list.sort(key=lambda x: x.kernel_quality, reverse=True)
 
     if export_formats is not None and export_ranking:
         for f in export_formats:

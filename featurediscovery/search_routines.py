@@ -17,6 +17,7 @@ def naive_monovariate(df:pd.DataFrame
                       , target_variable:str
                       , feature_space:List[str]
                       , compute_decision_boundary:bool=False
+                      , fit_metric:str = 'acc'
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
 
     #if use_cupy:
@@ -25,6 +26,7 @@ def naive_monovariate(df:pd.DataFrame
     #    return _naive_monovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
                     use_cupy=use_cupy, search_method='naive', kernel_type='monovariate',
+                    quality_metric=fit_metric,
                     compute_decision_boundary=compute_decision_boundary)
 
 
@@ -33,6 +35,7 @@ def full_monovariate(df:pd.DataFrame
                       , target_variable:str
                       , feature_space:List[str]
                       , compute_decision_boundary:bool=False
+                      , fit_metric: str = 'acc'
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
 
     #if use_cupy:
@@ -41,6 +44,7 @@ def full_monovariate(df:pd.DataFrame
     #    return _full_monovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
                     use_cupy=use_cupy, search_method='full', kernel_type='monovariate',
+                    quality_metric=fit_metric,
                     compute_decision_boundary=compute_decision_boundary)
 
 def naive_duovariate(df:pd.DataFrame
@@ -48,6 +52,7 @@ def naive_duovariate(df:pd.DataFrame
                       , target_variable:str
                       , feature_space:List[str]
                       , compute_decision_boundary: bool = False
+                      , fit_metric: str = 'acc'
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
     #if use_cupy:
     #    return _naive_duovariate_cupy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
@@ -55,6 +60,7 @@ def naive_duovariate(df:pd.DataFrame
     #    return _naive_duovariate_numpy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
                     use_cupy=use_cupy, search_method='naive', kernel_type='duovariate',
+                    quality_metric=fit_metric,
                     compute_decision_boundary=compute_decision_boundary)
 
 
@@ -63,6 +69,7 @@ def full_duovariate(df:pd.DataFrame
                       , target_variable:str
                       , feature_space:List[str]
                       , compute_decision_boundary: bool = False
+                      , fit_metric: str = 'acc'
                       , use_cupy:bool=True) -> List[Abstract_Kernel]:
     #if use_cupy:
     #    return _full_duovariate_cupy(df, search_dicts, target_variable=target_variable, feature_space=feature_space)
@@ -71,6 +78,7 @@ def full_duovariate(df:pd.DataFrame
 
     return _generic(df, search_dicts, target_variable=target_variable, feature_space=feature_space,
                     use_cupy=use_cupy, search_method='full', kernel_type='duovariate',
+                    quality_metric=fit_metric,
                     compute_decision_boundary=compute_decision_boundary)
 
 

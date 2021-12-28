@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 import os
-from typing import List
+from typing import List, Dict
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
 
@@ -287,6 +287,64 @@ def plot_ranking(kernel_list:List[Abstract_Kernel]
 
     if to_file:
         filename = 'performance_ranking{}.png'.format(suffix)
+        full_path = '{export_folder}/{filename}'.format(export_folder=export_folder, filename=filename)
+
+        fig.savefig(full_path)
+
+    if to_screen:
+        plt.show(block=True)
+
+
+
+def plot_highlights(highlight_dict:Dict[str, Abstract_Kernel]
+                 , to_screen: bool = True
+                 , to_file: bool = False
+                 , export_folder: str = False
+                 , suffix:str = ''
+                 ):
+
+    if to_file and export_folder is None:
+        raise Exception('Need to specify a folder for the exports')
+
+    if to_file:
+        try:
+            os.makedirs(export_folder , exist_ok=True)
+        except Exception as e:
+            print('ERROR whilst trying to create export folder {}'.format(export_folder))
+            raise e
+
+        if not os.path.isdir(export_folder):
+            raise Exception('Export folder is not a folder: {}'.format(export_folder))
+
+    best_kernel_per_feature_list = highlight_dict.values()
+    best_kernel_per_feature_list = \
+        list(best_kernel_per_feature_list)
+    best_kernel_input_features = list(highlight_dict.keys())
+
+    best_kernel_per_feature_list = zip(best_kernel_input_features, best_kernel_per_feature_list)
+    best_kernel_per_feature_list = [x for x in best_kernel_per_feature_list]
+
+    best_kernel_per_feature_list.sort(key=lambda x: x[1].kernel_quality, reverse=True)
+
+
+    #y_input_features = [k[0] for k in best_kernel_per_feature_list]
+    #y_kernel_names = [k[1].get_kernel_name() for k in best_kernel_per_feature_list]
+    y_kernel_qualities = [k[1].kernel_quality for k in best_kernel_per_feature_list]
+    y_tick_label = ["{} with kernel {}".format(x[0], x[1].get_kernel_name()) for x in best_kernel_per_feature_list]
+    y_pos = np.flip(np.arange(len(y_kernel_qualities)))
+
+    fig, ax = plt.subplots()
+
+    ax.barh(y_pos, y_kernel_qualities)
+
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(labels=y_tick_label, fontdict={'fontsize': 8})
+    ax.set_xlabel('Performance')
+    ax.set_title('Kernel Quality Ranking Per Feature'.format(suffix))
+    plt.tight_layout()
+
+    if to_file:
+        filename = 'performance_ranking per feature.png'.format(suffix)
         full_path = '{export_folder}/{filename}'.format(export_folder=export_folder, filename=filename)
 
         fig.savefig(full_path)

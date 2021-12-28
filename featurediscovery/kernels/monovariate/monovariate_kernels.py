@@ -10,7 +10,7 @@ import pandas as pd
 from featurediscovery.kernels.monovariate.abstract_monovariate import Abstract_Monovariate_Kernel
 
 
-SUPPORTED_MONOVARIATE_KERNELS = ['quadratic', 'gaussian_approx', 'sigmoid']
+SUPPORTED_MONOVARIATE_KERNELS = ['quadratic', 'gaussian_approx', 'sigmoid', 'log', 'log_shift']
 
 
 def get_mono_kernel(name:str, standardizer:str) -> Abstract_Monovariate_Kernel:
@@ -25,6 +25,12 @@ def get_mono_kernel(name:str, standardizer:str) -> Abstract_Monovariate_Kernel:
 
     if name == 'sigmoid':
         return Sigmoid_Kernel(standardizer)
+
+    if name == 'log':
+        return Log_Kernel(standardizer)
+
+    if name == 'log_shift':
+        return Shifted_Log_Kernel(standardizer)
 
 
 

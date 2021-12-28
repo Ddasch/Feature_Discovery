@@ -9,7 +9,7 @@ from featurediscovery.kernels.duovariate.abstract_duovariate import Abstract_Duo
 from sklearn.preprocessing import PolynomialFeatures
 
 
-SUPPORTED_DUOVARIATE_KERNELS = ['difference', 'magnitude', 'poly3', 'poly2']
+SUPPORTED_DUOVARIATE_KERNELS = ['difference', 'magnitude', 'poly3', 'poly2', 'rff', 'rff_gauss']
 
 
 def get_duo_kernel(kernel_name:str, standardizer:str) -> Abstract_Duovariate_Kernel:
@@ -27,6 +27,12 @@ def get_duo_kernel(kernel_name:str, standardizer:str) -> Abstract_Duovariate_Ker
 
     if kernel_name == 'magnitude':
         return Magnitude_Kernel(standardizer)
+
+    if kernel_name == 'rff':
+        return RFF_Kernel(standardizer)
+
+    if kernel_name == 'rff_gauss':
+        return RFF_Kernel_Gauss_Approx(standardizer)
 
 
 difference_kernel_singleton = None
@@ -208,7 +214,7 @@ class Polynomial_Second_Order_Kernel(Abstract_Duovariate_Kernel):
 
     def _get_kernel_feature_names(self, f1:str, f2:str):
         return ['{}^2'.format(f1)
-            , '{}*{}'.format(f1, f2)
+            , '2*{}*{}'.format(f1, f2)
             , '{}^2'.format(f2)]
 
     def get_kernel_name(self) -> str:
@@ -242,12 +248,26 @@ class Sigmoid_Kernel_Backwards(Abstract_Duovariate_Kernel):
         if self.api == 'cupy':
             x_ret = self.kernel_func(x[:, 0], x[:, 1])
             return x_ret
+
         if self.api == 'numpy':
             raise Exception('not yet implemented')
 
     def sigmoid_backward(self, dA: Union[np.ndarray, cp.ndarray], Z:Union[np.ndarray, cp.ndarray]):
         x_ret = self.kernel_func(dA, Z)
+
+        '''
+        #NOTE: debug code to investigate nan values due to exploding gradients
+        if cp.isnan(cp.sum(x_ret)):
+            dA = dA.get()
+            Z = Z.get()
+
+            dA_nan_indezi = np.argwhere(np.isnan(dA))
+            Z_nan_indezi = np.argwhere(np.isnan(Z))
+            print('')
+        '''
+
         return x_ret
+
 
 
     def get_kernel_name(self):

@@ -37,7 +37,7 @@ class Logistic_Scikit(Abstract_Fitter):
         if type(x) != np.ndarray or type(y) != np.ndarray:
             raise Exception('Scikit fitters require np.ndarray as input. Received {} instead'.format(type(x)))
 
-        logistic = LogisticRegression()
+        logistic = LogisticRegression(solver='liblinear')
 
         logistic.fit(x,y.reshape(-1))
 

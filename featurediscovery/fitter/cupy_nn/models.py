@@ -67,6 +67,8 @@ class ANN():
     cost_function = None
     better_weight_init_method:str = None
     optimizer: str = None
+    gradient_clipping_val:float = None
+
     def __init__(self,
                  cost:str,
                  output_activation: str,
@@ -74,7 +76,8 @@ class ANN():
                  hidden_layer_sizes: List[int] = None,
                  hidden_activations: List[str] = None,
                  better_weight_init_method:str = None,
-                 optimizer:str='adam'
+                 optimizer:str='adam',
+                 gradient_clipping_val:float=5.0
                  ):
 
         if hidden_layer_sizes is None:
@@ -111,9 +114,10 @@ class ANN():
         self._output_activation = output_activation
         self.better_weight_init_method = better_weight_init_method
         self.optimizer = optimizer
+        self.gradient_clipping_val = gradient_clipping_val
 
         if cost in ['cross-entropy']:
-            self.cost_function = CrossEntropyCost()
+            self.cost_function = CrossEntropyCost(gradient_clipping_val=self.gradient_clipping_val)
 
         self.layers = []
 

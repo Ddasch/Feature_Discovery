@@ -91,7 +91,7 @@ class Layer():
 
         return A
 
-    def _linear_backward(self, dZ):
+    def _linear_backward(self, dZ, dA_debug=None):
         '''
         Given derivative of loss w.r.t. the linear output activation, compute the derivative of the loss w.r.t
         the input activation of this layer. Also computes and caches derivatives of loss w.r.t the weights and biases
@@ -113,6 +113,39 @@ class Layer():
 
         assert (dA_prev.shape == self.A_prev_cache.shape)
         assert (dW.shape == self.W.shape)
+
+        '''
+        #NOTE: debug code to investigate nan values due to exploding gradients
+        if cp.isnan(cp.sum(dW)):
+            import numpy as np
+            dZ = self.activation_func_obj.activation_backward(dA_debug, self.Z_cache)
+
+            dZ = dZ.get()
+            A_prev_cache = self.A_prev_cache.get()
+            A_prev_cache = A_prev_cache.T
+            tmp = np.dot(dZ, A_prev_cache)
+            tmp = tmp / m
+
+
+            #manual dot product for debug
+            dZ_nan_indexi = np.argwhere(np.isnan(dZ))
+
+
+            debug_dot_product = np.zeros((dZ.shape[0], A_prev_cache.shape[1]))
+            for index_dZ in range(dZ.shape[0]):
+                for index_A_prev_cache in range(A_prev_cache.shape[1]):
+                    sum = 0
+                    for sample_index in range(dZ.shape[1]):
+                        val_dZ = dZ[index_dZ][sample_index]
+                        val_A_prev_debug = A_prev_cache[sample_index][index_A_prev_cache]
+                        if np.isnan(sum + val_dZ*val_A_prev_debug):
+                            print('')
+                        sum = sum + val_dZ*val_A_prev_debug
+
+                    debug_dot_product[index_dZ][index_A_prev_cache] = sum
+
+            print('')
+        '''
 
         self.dW = dW
         self.db = db

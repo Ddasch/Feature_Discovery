@@ -477,6 +477,7 @@ def _generic(df:pd.DataFrame
         X = cp.array(X)
         Y = cp.array(Y)
         api = cp
+        cp.random.seed(1)
 
     feature_name_2_index = {}
     for i in range(len(feature_space)):
@@ -491,7 +492,11 @@ def _generic(df:pd.DataFrame
         fitter = Logistic_Scikit(quality_metric)
     fit_quality_pre_kernel = fitter.compute_fit_quality(X, Y)
 
+    run_count = 0
     for kernel_dict in search_dicts:
+        if run_count == 60:
+            print('')
+
         #slice X so that it only has the feature for the input kernel
         if kernel_type == 'monovariate':
             feature_index = feature_name_2_index[kernel_dict['feature_a']]
@@ -548,6 +553,8 @@ def _generic(df:pd.DataFrame
 
         #append to list
         all_kernels.append(kernel)
+
+        run_count = run_count + 1
 
     return all_kernels
 

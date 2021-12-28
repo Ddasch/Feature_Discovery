@@ -2,8 +2,13 @@ import cupy as cp
 
 
 class CrossEntropyCost():
-
+    gradient_clipping_val:float = None
     epsilon = 1e-12
+
+    def __init__(self, gradient_clipping_val:float=None):
+        self.gradient_clipping_val = gradient_clipping_val
+        if self.gradient_clipping_val is not None:
+            assert gradient_clipping_val >= 0.1
 
     def compute_cost(self, AL, Y):
         """
@@ -35,4 +40,8 @@ class CrossEntropyCost():
         #source: http://www.adeveloperdiary.com/data-science/deep-learning/neural-network-with-softmax-in-python/
         #return cp.subtract(AL,Y)
         #NOTE: BAD SOURCE!, incorrect!
-        return - (cp.divide(Y, AL) - cp.divide(1 - Y, 1 - AL))
+        unclipped = - (cp.divide(Y, AL) - cp.divide(1 - Y, 1 - AL))
+        if self.gradient_clipping_val is not None:
+            unclipped[unclipped > self.gradient_clipping_val] = self.gradient_clipping_val
+            unclipped[unclipped < - self.gradient_clipping_val] = -self.gradient_clipping_val
+        return unclipped

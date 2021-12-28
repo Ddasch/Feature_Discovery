@@ -19,7 +19,7 @@ tackle. Now a Support Vector Machine would train a linear model using &phi;(x) a
 
 # How does it work?
 By applying a series feature maps &phi; to features / feature-pairs of your data and measuring how much a particular map
-would improve the linear separability of the data. You provide the data and a list of features to look into and kernels
+would improve the linear separability of the data. You provide the data, a list of features to look into and kernels
 to try, and Feature Discovery tries them all and compiles its findings into easily digestible plots or rankings. 
 
 ## Currently Supported Kernels
@@ -36,5 +36,6 @@ to try, and Feature Discovery tries them all and compiles its findings into easi
  
 
 
-[^1]: Some kernels like RBF don't do this explicitly and compute the instance similarities differently.
+[^1]: Some kernels like RBF don't do this explicitly and compute the instance similarities differently. For these an
+explicit mapping can only be approximated.
 

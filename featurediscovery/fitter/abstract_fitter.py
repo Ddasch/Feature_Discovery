@@ -41,9 +41,10 @@ class Abstract_Fitter(ABC):
 
         if use_cupy:
             if len(set(cp.unique(y_hat).get()).difference(set(cp.unique(y).get()))) > 0:
+                y_hat = self._score(x)
                 raise Exception(
                     'Fitter is returning labels not in the original set. Original set is {} but fitter is returning {}'.format(
-                        set(cp.unique(y)), set(cp.unique(y_hat))))
+                        set(cp.unique(y).get()), set(cp.unique(y_hat).get())))
         else:
             if len(set(np.unique(y_hat)).difference(set(np.unique(y)))) > 0:
                 raise Exception(

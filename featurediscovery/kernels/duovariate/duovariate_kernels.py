@@ -304,7 +304,7 @@ class RFF_Kernel(Abstract_Duovariate_Kernel):
 
     W = None
     b = None
-    n_transforms: int = 100
+    n_transforms: int = 200
 
     def _fit(self, x: Union[np.ndarray, cp.ndarray]):
         if self.api == 'cupy':
@@ -317,6 +317,8 @@ class RFF_Kernel(Abstract_Duovariate_Kernel):
             #self.b = np.random.randn(self.n_transforms, 1) * 2 * np.pi
             self.W = np.random.randn(x.shape[1], self.n_transforms)
             self.b = np.random.randn(1, self.n_transforms) * 2 * np.pi
+            #self.W = np.random.uniform(np.min(x), np.max(x), (x.shape[1], self.n_transforms))
+            #self.b = np.random.uniform(-2 * np.pi, 2 * np.pi, (1, self.n_transforms))
 
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):

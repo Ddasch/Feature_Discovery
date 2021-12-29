@@ -5,7 +5,7 @@ import cupy as cp
 import numpy as np
 
 
-SUPPORTED_STANDARDIZERS = ['centralized', 'standard', 'raw']
+SUPPORTED_STANDARDIZERS = ['centralized', 'standard', 'raw', 'minmax']
 
 
 def get_scaler(scaler_name:str) -> Abstract_Standardizer:
@@ -24,6 +24,9 @@ def get_scaler(scaler_name:str) -> Abstract_Standardizer:
 
     if scaler_name in ['standard']:
         return Stand_Scaler()
+
+    if scaler_name in ['minmax']:
+        return MinMax_Scaler()
 
 
 
@@ -84,4 +87,30 @@ class Stand_Scaler(Abstract_Standardizer):
         x_ret = x.copy()
         x_ret = x_ret * self.stds
         x_ret = x_ret + self.means
+        return x_ret
+
+
+
+class MinMax_Scaler(Abstract_Standardizer):
+
+    min = None
+    ranges = None
+
+    def _fit(self, x: Union[np.ndarray, cp.ndarray]):
+        self.min = x.min(axis=0)
+        self.ranges = x.max(axis=0) - x.min(axis=0)
+
+    def _transform(self, x: Union[np.ndarray, cp.ndarray]) -> Union[np.ndarray, cp.ndarray]:
+        x_ret = x.copy()
+        x_ret = x_ret - self.min
+        x_ret = x_ret / self.ranges
+        return x_ret
+
+    def get_standardizer_name(self):
+        return 'minmax'
+
+    def _inverse_transform(self, x: Union[np.ndarray, cp.ndarray]):
+        x_ret = x.copy()
+        x_ret = x_ret * self.ranges
+        x_ret = x_ret + self.min
         return x_ret

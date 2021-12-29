@@ -77,7 +77,7 @@ class ANN():
                  hidden_activations: List[str] = None,
                  better_weight_init_method:str = None,
                  optimizer:str='adam',
-                 gradient_clipping_val:float=5.0
+                 gradient_clipping_val:float=1.0
                  ):
 
         if hidden_layer_sizes is None:
@@ -191,13 +191,17 @@ class ANN():
 
         self.layers.append(output_layer)
 
-    def fit(self, x: cp.ndarray, y: cp.ndarray, n_epoch:int=20
+    def fit(self, x: cp.ndarray, y: cp.ndarray
+            , max_epoch:int=100
+            , min_epoch:int=20
             , cost_improvement_thresh:float=0.001
             , cost_improvement_agg_range:int=5
-            , verbose:bool=False):
+            , verbose:bool=False
+            , debug:bool=False
+            ):
 
-        if n_epoch is None:
-            n_epoch = 99999999
+        if max_epoch is None:
+            max_epoch = 100
 
         # shape x: [n_sample, n_feature], standard format what you get out of a df
         X = x.transpose()
@@ -210,7 +214,7 @@ class ANN():
 
         cost_history = cp.ones((cost_improvement_agg_range))*99999
 
-        for epoch in range(n_epoch):
+        for epoch in range(max_epoch):
 
             #forward pass
             A = X
@@ -225,7 +229,7 @@ class ANN():
                 print('Cost at epoch {} : {}'.format(epoch, current_cost))
 
             if cost_improvement_thresh is not None:
-                if cost_history_agg - current_cost <= cost_improvement_thresh:
+                if cost_history_agg - current_cost <= cost_improvement_thresh and epoch > min_epoch:
                     break
 
             cost_history[:-1] = cost_history[1:]
@@ -233,6 +237,13 @@ class ANN():
 
             #compute derivative of loss with respect to last activation
             dL_A = self.cost_function.loss_backward(A, Y)
+
+            if debug:
+                import numpy as np
+                A_tmp = A.get()
+                dL_A_tmp = dL_A.get()
+                dL_A_nan_indexi =  np.argwhere(np.isnan(dL_A_tmp))
+                dL_A = self.cost_function.loss_backward(A, Y, debug=True)
 
             #abort backprop if derivatives have a nan
             if cp.isnan(cp.sum(dL_A)):

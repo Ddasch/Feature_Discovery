@@ -282,7 +282,7 @@ def plot_ranking(kernel_list:List[Abstract_Kernel]
     ax.set_yticks(y_pos)
     ax.set_yticklabels(labels=kernel_names, fontdict={'fontsize': 8})
     ax.set_xlabel('Performance')
-    ax.set_title('Kernel Quality Ranking {}'.format(suffix))
+    ax.set_title('Kernel Quality Ranking {} - All kernels'.format(suffix))
     plt.tight_layout()
 
     if to_file:
@@ -340,7 +340,7 @@ def plot_highlights(highlight_dict:Dict[str, Abstract_Kernel]
     ax.set_yticks(y_pos)
     ax.set_yticklabels(labels=y_tick_label, fontdict={'fontsize': 8})
     ax.set_xlabel('Performance')
-    ax.set_title('Kernel Quality Ranking Per Feature'.format(suffix))
+    ax.set_title('Best Kernel Quality Per Feature'.format(suffix))
     plt.tight_layout()
 
     if to_file:

@@ -36,12 +36,25 @@ class CrossEntropyCost():
 
         return cost
 
-    def loss_backward(self, AL, Y):
+    def loss_backward(self, AL, Y, debug:bool=False):
         #source: http://www.adeveloperdiary.com/data-science/deep-learning/neural-network-with-softmax-in-python/
         #return cp.subtract(AL,Y)
         #NOTE: BAD SOURCE!, incorrect!
+
+        AL = cp.clip(AL, self.epsilon, 1 - self.epsilon)
         unclipped = - (cp.divide(Y, AL) - cp.divide(1 - Y, 1 - AL))
         if self.gradient_clipping_val is not None:
             unclipped[unclipped > self.gradient_clipping_val] = self.gradient_clipping_val
             unclipped[unclipped < - self.gradient_clipping_val] = -self.gradient_clipping_val
+
+        if debug:
+            import numpy as np
+            AL = AL.get()
+            Y = Y.get()
+            first_part_loss = np.divide(Y, AL)
+            second_part_loss = - np.divide(1 - Y, 1 - AL)
+            loss = -(first_part_loss - second_part_loss)
+
+
+
         return unclipped

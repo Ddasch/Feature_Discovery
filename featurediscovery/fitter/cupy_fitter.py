@@ -16,11 +16,16 @@ class Logistic_Regression_ANN(Abstract_Fitter):
                          , output_activation='sigmoid'
                          , hidden_activations=None
                          , hidden_layer_sizes=None
-                         , learning_rate=0.04
+                         , learning_rate=0.1
                          , better_weight_init_method='magnified_corr')
 
-    def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
-        self.model.fit(x,y,n_epoch=300, cost_improvement_thresh=0.0001, cost_improvement_agg_range=5, verbose=False)
+    def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray], debug:bool=False):
+        self.model.fit(x, y
+                       , max_epoch=500
+                       , min_epoch=5
+                       , cost_improvement_thresh=0.00001
+                       , cost_improvement_agg_range=10
+                       , verbose=False, debug=debug)
 
 
     def _score(self, x: Union[np.ndarray, cp.ndarray]):

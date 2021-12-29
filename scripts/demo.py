@@ -6,14 +6,19 @@ from featurediscovery.kernel_search import evaluate_kernels
 
 def generate_demo_dataset(no_samples:int):
 
+    np.random.seed(1)
 
     # Engineer a 2nd order polynomial solution
     x1 = np.random.uniform(-10, 10, no_samples)
     x2 = np.random.uniform(-10, 10, no_samples)
 
-    poly2 = 0.1*x1*x1 - 10*x1*x2 + 2*x2*x2
-    y_poly2 = np.zeros(no_samples)
-    y_poly2[poly2 > 100] = 0.0
+    #poly2 = 0.1*x1*x1 - 10*x1*x2 + 2*x2*x2
+    #y_poly2 = np.zeros(no_samples)
+    #y_poly2[poly2 > 100] = 0.6
+
+    poly3 = 1 * x1 * x1 * x1 - 3 * x1 * x1 * x2 + 3 * x1 * x2 * x2 - 1 * x2 * x2 * x2
+    y_poly3 = np.zeros(no_samples)
+    y_poly3[poly3 > 1.5] = 0.6
 
     #add some noise to pattern
     #x1 = x1 + np.random.randn(no_samples)
@@ -70,7 +75,7 @@ def generate_demo_dataset(no_samples:int):
         data['x{}'.format(feature_index)] = x_noise3[:,i]
         feature_index = feature_index + 1
 
-    y = y_poly2 + y_cosine
+    y = y_poly3 + y_cosine
     y[y > 0.5] = 1
     y[y < 0.5] = 0
 
@@ -82,7 +87,7 @@ def generate_demo_dataset(no_samples:int):
 
 if __name__ == '__main__':
 
-    df = generate_demo_dataset(1000)
+    df = generate_demo_dataset(10000)
 
     #feature_space = ['x0','x1','x2','x3','x4','x5','x6','x7','x8','x9','x10','x11','x12']
     feature_space = ['x0', 'x1', 'x2', 'x3', 'x4', 'x5']
@@ -90,11 +95,11 @@ if __name__ == '__main__':
                      , target_variable='y'
                      , feature_space=feature_space
                      , monovariate_kernels=None
-                     , duovariate_kernels=['poly2', 'poly3', 'rff_gauss']
-                     , feature_standardizers=['minmax', 'raw', 'standard']
+                     , duovariate_kernels=['poly3']
+                     , feature_standardizers=['raw']
                      , plot_ranking=True
                      , eval_method='full'
-                     , use_cupy='no'
+                     , use_cupy='yes'
                      )
 
 

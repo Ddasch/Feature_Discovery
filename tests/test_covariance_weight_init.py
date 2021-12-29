@@ -159,7 +159,7 @@ def test_weight_init_fit():
                      , learning_rate=0.1
                      , better_weight_init_method='corr')
 
-        model.fit(X,Y, verbose=False, n_epoch=200)
+        model.fit(X, Y, verbose=False, max_epoch=200)
         n_epochs_better.append(model._n_performed_epochs)
         y_hat = model.score(X)
 
@@ -171,7 +171,7 @@ def test_weight_init_fit():
                      , learning_rate=0.1
                      , better_weight_init_method=None)
 
-        model2.fit(X, Y, verbose=False, n_epoch=200)
+        model2.fit(X, Y, verbose=False, max_epoch=200)
         n_epochs_random.append(model2._n_performed_epochs)
         y_hat2 = model2.score(X)
 

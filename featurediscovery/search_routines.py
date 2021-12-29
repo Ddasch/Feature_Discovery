@@ -536,7 +536,7 @@ def _generic(df:pd.DataFrame
         else:
             fitter = Logistic_Scikit(quality_metric)
 
-        fit_quality = fitter.compute_fit_quality(X_final,Y)
+        fit_quality = fitter.compute_fit_quality(X_final,Y, debug=True)
         if search_method == 'full':
             fit_quality = fit_quality - fit_quality_pre_kernel
 

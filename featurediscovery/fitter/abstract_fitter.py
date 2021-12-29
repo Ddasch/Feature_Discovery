@@ -24,7 +24,7 @@ class Abstract_Fitter(ABC):
 
 
 
-    def compute_fit_quality(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]) -> float:
+    def compute_fit_quality(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray], debug:bool=False) -> float:
 
         if len(x.shape) != 2:
             raise Exception('x must be 2 dimensional, first dimension indicating the sample index and second the feature index')
@@ -38,7 +38,7 @@ class Abstract_Fitter(ABC):
 
         use_cupy = type(x) == cp.ndarray
 
-        self._fit(x,y)
+        self._fit(x,y, debug=debug)
 
         y_hat = self._score(x)
 
@@ -121,7 +121,7 @@ class Abstract_Fitter(ABC):
         return x_decision_boundary, y_hat_decision_boundary
 
     @abstractmethod
-    def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray]):
+    def _fit(self, x: Union[np.ndarray, cp.ndarray], y:Union[np.ndarray, cp.ndarray], debug:bool=False):
         pass
 
     @abstractmethod

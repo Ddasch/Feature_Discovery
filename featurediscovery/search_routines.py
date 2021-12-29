@@ -529,6 +529,8 @@ def _generic(df:pd.DataFrame
             X_final = X_kernel
         if search_method == 'full':
             X_final = api.column_stack((X, X_kernel))
+        if search_method == 'normal':
+            X_final = api.column_stack((X_slice, X_kernel))
 
         #evaluate naive fit quality
         if use_cupy:
@@ -555,6 +557,10 @@ def _generic(df:pd.DataFrame
             model_input_feature_names = feature_space.copy()
             for f in kernel.get_kernel_feature_names(kernel_input_feature_names):
                 model_input_feature_names.append(f)
+        if search_method == 'normal':
+            model_input_feature_names = kernel_input_feature_names.copy()
+            for derived_feature in kernel.get_kernel_feature_names(kernel_input_feature_names):
+                model_input_feature_names.append(derived_feature)
 
         kernel.finalize(fit_quality, kernel_input_feature_names, model_input_feature_names
                         , x_decision_boundary, y_decision_boundary)

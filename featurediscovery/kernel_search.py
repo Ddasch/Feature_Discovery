@@ -10,7 +10,7 @@ from featurediscovery.kernels.duovariate.duovariate_kernels import SUPPORTED_DUO
 from featurediscovery.standardizers.standardizers import SUPPORTED_STANDARDIZERS
 from featurediscovery.util import general_utilities
 from featurediscovery.util.exceptions import *
-from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate
+from featurediscovery.search_routines import naive_monovariate, full_monovariate, naive_duovariate, full_duovariate, _generic
 from featurediscovery import plotter
 from featurediscovery import exporter
 
@@ -79,8 +79,8 @@ def _search(df:pd.DataFrame
             raise SetupException('Listed duovariate kernel {} not supported. Supported kernels are: {}'.format(duovariate_kernels, SUPPORTED_DUOVARIATE_KERNELS))
 
     #check that eval method correctly specified
-    if eval_method not in ['full', 'naive']:
-        raise SetupException('Eval method must be in [full, naive]')
+    if eval_method not in ['full', 'naive', 'normal']:
+        raise SetupException('Eval method must be in [full, naive, normal]')
 
     #check that standardizer lise is correct
     if feature_standardizers is None:
@@ -132,10 +132,16 @@ def _search(df:pd.DataFrame
             mono_results = naive_monovariate(df=df, search_dicts=mono_kernel_dicts, feature_space=feature_space
                                              , fit_metric=fit_metric
                                              , target_variable=target_variable, use_cupy=use_cupy)
-        else:
+        if eval_method == 'full':
             mono_results = full_monovariate(df=df, search_dicts=mono_kernel_dicts, feature_space=feature_space
                                             , fit_metric=fit_metric
                                             , target_variable=target_variable, use_cupy=use_cupy)
+        if eval_method == 'normal':
+            mono_results = _generic(df, mono_kernel_dicts, target_variable=target_variable, feature_space=feature_space,
+                    use_cupy=use_cupy, search_method='normal', kernel_type='monovariate',
+                    quality_metric=fit_metric,
+                    compute_decision_boundary=compute_decision_boundary)
+
 
         for kernel in mono_results:
             all_kernels.append(kernel)
@@ -145,10 +151,15 @@ def _search(df:pd.DataFrame
             duo_results = naive_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
                                             , fit_metric=fit_metric
                                              , target_variable=target_variable, use_cupy=use_cupy)
-        else:
+        if eval_method == 'full':
             duo_results = full_duovariate(df=df, search_dicts=duo_kernel_dicts, feature_space=feature_space
                                            , fit_metric=fit_metric
                                            , target_variable=target_variable, use_cupy=use_cupy)
+        if eval_method == 'normal':
+            duo_results = _generic(df, duo_kernel_dicts, target_variable=target_variable, feature_space=feature_space,
+                    use_cupy=use_cupy, search_method='normal', kernel_type='duovariate',
+                    quality_metric=fit_metric,
+                    compute_decision_boundary=compute_decision_boundary)
 
         for kernel in duo_results:
             all_kernels.append(kernel)
@@ -187,6 +198,7 @@ def evaluate_kernels(df:pd.DataFrame
                           , duovariate_kernels=duovariate_kernels
                           , feature_standardizers=feature_standardizers
                           , compute_decision_boundary=compute_decision_boundary
+                          , fit_metric=fit_metric
                           , use_cupy=use_cupy)
 
 
@@ -206,6 +218,8 @@ def evaluate_kernels(df:pd.DataFrame
                      , to_screen=plot_ranking
                      , to_file=export_ranking
                      , export_folder=export_folder
+                     , search_method=eval_method
+                     , y_true=df[target_variable].values
                      )
 
     if export_formats is not None and export_ranking:

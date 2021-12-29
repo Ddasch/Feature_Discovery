@@ -18,7 +18,7 @@ def generate_demo_dataset(no_samples:int):
 
     poly3 = 1 * x1 * x1 * x1 - 3 * x1 * x1 * x2 + 3 * x1 * x2 * x2 - 1 * x2 * x2 * x2
     y_poly3 = np.zeros(no_samples)
-    y_poly3[poly3 > 1.5] = 0.6
+    y_poly3[poly3 > 1.5] = 0.0
 
     #add some noise to pattern
     #x1 = x1 + np.random.randn(no_samples)
@@ -87,7 +87,7 @@ def generate_demo_dataset(no_samples:int):
 
 if __name__ == '__main__':
 
-    df = generate_demo_dataset(10000)
+    df = generate_demo_dataset(1000)
 
     #feature_space = ['x0','x1','x2','x3','x4','x5','x6','x7','x8','x9','x10','x11','x12']
     feature_space = ['x0', 'x1', 'x2', 'x3', 'x4', 'x5']
@@ -95,11 +95,11 @@ if __name__ == '__main__':
                      , target_variable='y'
                      , feature_space=feature_space
                      , monovariate_kernels=None
-                     , duovariate_kernels=['poly3']
+                     , duovariate_kernels=['poly3', 'rff_gauss']
                      , feature_standardizers=['raw']
                      , plot_ranking=True
-                     , eval_method='full'
-                     , use_cupy='yes'
+                     , eval_method='normal'
+                     , use_cupy='no'
                      )
 
 

@@ -18,7 +18,7 @@ def generate_demo_dataset(no_samples:int):
 
     poly3 = 1 * x1 * x1 * x1 - 3 * x1 * x1 * x2 + 3 * x1 * x2 * x2 - 1 * x2 * x2 * x2
     y_poly3 = np.zeros(no_samples)
-    y_poly3[poly3 > 1.5] = 0.0
+    y_poly3[poly3 > 1.5] = 0.6
 
     #add some noise to pattern
     #x1 = x1 + np.random.randn(no_samples)

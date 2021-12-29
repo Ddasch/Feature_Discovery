@@ -184,7 +184,7 @@ def benchmark_dim_scaling(n_test:int = 1):
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('avg runtime (s)')
-    ax.set_title('Feature Discovery Runtime Benchmark , d={}'.format(n_dim))
+    ax.set_title('Feature Discovery Runtime Benchmark , n={}'.format(n_sample))
     ax.set_xticks(x, labels)
     ax.legend()
 
@@ -306,7 +306,7 @@ def benchmark_sample_scaling(n_test:int = 1):
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('avg runtime (s)')
-    ax.set_title('Feature Discovery Runtime Benchmark - n={}'.format(n_sample))
+    ax.set_title('Feature Discovery Runtime Benchmark - d={}'.format(n_dim))
     ax.set_xticks(x, labels)
     ax.legend()
 

@@ -60,7 +60,7 @@ TODO
 >>> kernel_search.evaluate_kernels(df
                      , target_variable='y'
                      , feature_space=feature_space
-                     , monovariate_kernels=['quadratic', 'sigmoid', 'log', 'log_shift']
+                     , monovariate_kernels=['quadratic', 'log']
                      , duovariate_kernels=['poly3', 'rff_gauss']
                      , feature_standardizers=['raw']
                      , plot_feature_ranking=True
@@ -69,31 +69,39 @@ TODO
                      )
 ```
 
+With the two plot parameters enabled two feature priority lists will be generated, a full list of every combination that
+was evaluated (which can be too much to plot depending on the amount of features/combinations), and a feature ranking
+which shows per feature only the best kernel transformation that was found. The red vertical line is the prior class probability,
+meaning a kernel is only beneficial if the model can improve upon this class probability. 
+
+<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="600"/></div>
+
+###### Optional parameters
+
+| Parameter | Allowed Values | Function |
+|-----------|----------------|----------|
+|plot_feature_ranking|bool: True/False|Plot the feature ranking to screen using the best kernel per feature|
+|plot_ranking_all_transformations|bool: True/False|Plot the ranking of every tried kernel to screen|
+|plot_individual_kernels|bool: True/False|Plot the result of individual kernels to screen|
+|kernel_plot_mode|str: 'scree', 'tsne'|Indicate whether the individual kernels results should be displayed as a (series of) scree plots or as a TSNE plot|
+|export_ranking|bool: True/False|Export the ranking to file. Useful for larger jobs.|
+|export_individual_kernel_plots|bool: True/False|Export the individual kernel plots to files. Useful for larger jobs.|
+|export_folder|str|Path indicating where to store rankings/plots|
+|export_formats|list[str]: ['png', 'csv', 'json']| List of one or more export formats for the kernel rankings. If png is selected, then plots will automatically be generated (so no need to set the plot parameter to true)|
+|eval_method|str: 'naive', 'normal', 'full'| How the quality of the kernel should be evaluated. See below for explanation|
+|use_cupy|str: 'yes', 'no', 'auto'|Indicate whether or not to use GPU acceleration. GPU acceleration is faster when analyzing larger datasets|
+--------
+
+###### Evaluation methods
+Three approaches how the linear separability of the generated kernel features should be evaluated, as specified by the 'eval_method' parameter.
+These are
+- naive: Only generated features are measured for separability. Kernel input features and other raw features are ignored.
+- normal: Generated features together with kernel input featues are measured for separability. Other aw features are ignored.
+- full: Generated features together with kernel input featues and other raw features are measured for separability.
+Quality metric here changes to how much the added features improve upon the separability already present in the original dataset.
 
 
-<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="500"/></div>
 
-
-
-```py
-
->>> kernel_search.evaluate_kernels(df
-                     , target_variable='y'
-                     , feature_space=feature_space
-                     , monovariate_kernels=['quadratic', 'sigmoid', 'log', 'log_shift']
-                     , duovariate_kernels=['difference', 'magnitude','poly2', 'poly3', 'rff_gauss']
-                     , feature_standardizers=['raw','centralized', 'standard', 'minmax']
-                     , plot_feature_ranking=True/False
-                     , plot_ranking_all_transformations=True/False
-                     , plot_individual_kernels=True/False
-                     , export_folder='<path to folder>'
-                     , export_ranking=True/False
-                     , export_formats=['png', 'json', 'csv']
-                     , export_individual_kernel_plots=True/False
-                     , eval_method='normal'
-                     , use_cupy='no'
-                     )
-```
 
 [^1]: Some kernels like RBF don't do this explicitly and compute the instance similarities differently. For these an
 explicit mapping can only be approximated.

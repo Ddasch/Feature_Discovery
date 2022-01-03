@@ -71,6 +71,10 @@ TODO
 
 
 
+<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="500"/></div>
+
+
+
 ```py
 
 >>> kernel_search.evaluate_kernels(df

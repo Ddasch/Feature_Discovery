@@ -205,9 +205,14 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
         pass
 
     def _transform(self, x: Union[np.ndarray, cp.ndarray]):
-        x_ret = self.kernel_func(x)
-        return x_ret
+        if type(x) == cp.ndarray:
+            x_ret = self.kernel_func(x)
+            return x_ret
+        else:
+            x_ret = 1 / (1 + np.exp(-1*x))
+            return x_ret
 
+    '''
     def apply(self, df:pd.DataFrame):
         if not self.finalized:
             raise Exception('Attempting to apply kernel that has not been finalized yet')
@@ -223,6 +228,7 @@ class Sigmoid_Kernel(Abstract_Monovariate_Kernel):
         self.kernel_features = [k_feat_name]
 
         return df
+    '''
 
     def get_kernel_name(self):
         return 'Sigmoid {} {}'.format(self.kernel_input_features[0], self.standardizer.get_standardizer_name())

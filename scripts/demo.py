@@ -94,7 +94,7 @@ if __name__ == '__main__':
     evaluate_kernels(df
                      , target_variable='y'
                      , feature_space=feature_space
-                     , monovariate_kernels=None
+                     , monovariate_kernels=['quadratic', 'log']
                      , duovariate_kernels=['poly3', 'rff_gauss']
                      , feature_standardizers=['raw']
                      , plot_feature_ranking=True

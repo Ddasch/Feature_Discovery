@@ -48,7 +48,7 @@ def test_all_standardizers():
                                    , feature_standardizers=['raw', 'standard', 'centralized']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=True
+                                   , plot_feature_ranking=True
                                    , plot_individual_kernels=False
                                    , kernel_plot_mode='scree'
                                    , export_folder='./test_output/'

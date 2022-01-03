@@ -78,7 +78,7 @@ def test_scree_plot_boundary3D():
                                    , duovariate_kernels=['poly2']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='scree'
                                    )
@@ -118,7 +118,7 @@ def test_scree_plot_boundary2D():
                                    , feature_standardizers=['raw', 'centralized', 'standard']
                                    , eval_method='naive'
                                    , use_cupy='no'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='scree'
                                    )
@@ -161,7 +161,7 @@ def test_ranking_to_screen():
                                    , feature_standardizers=['raw', 'centralized', 'standard']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=True
+                                   , plot_feature_ranking=True
                                    , plot_individual_kernels=False
                                    , kernel_plot_mode='scree'
                                    , export_folder='./test_output/'

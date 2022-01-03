@@ -170,24 +170,25 @@ def _search(df:pd.DataFrame
 
 
 def evaluate_kernels(df:pd.DataFrame
-            , target_variable: str
-            , feature_space: List[str]
-            , eval_method: str = 'full'
-            , mandatory_features: List[str] = None
-            , monovariate_kernels: List[str] = None
-            , duovariate_kernels: List[str] = None
-            , feature_standardizers:List[str] = None
-            , use_cupy: str = 'auto'
-            , plot_ranking:bool=True
-            , plot_individual_kernels:bool=False
-            , kernel_plot_mode: str = 'scree'
-            , export_folder: str = None
-            , export_ranking: bool = False
-            , export_formats: List[str] = None
-            , export_individual_kernel_plots: bool = False
-            , compute_decision_boundary:bool=False
-            , fit_metric:str = 'acc'
-         ) -> List[Abstract_Kernel]:
+                     , target_variable: str
+                     , feature_space: List[str]
+                     , eval_method: str = 'full'
+                     , mandatory_features: List[str] = None
+                     , monovariate_kernels: List[str] = None
+                     , duovariate_kernels: List[str] = None
+                     , feature_standardizers:List[str] = None
+                     , use_cupy: str = 'auto'
+                     , plot_feature_ranking:bool=True
+                     , plot_ranking_all_transformations:bool=False
+                     , plot_individual_kernels:bool=False
+                     , kernel_plot_mode: str = 'scree'
+                     , export_folder: str = None
+                     , export_ranking: bool = False
+                     , export_formats: List[str] = None
+                     , export_individual_kernel_plots: bool = False
+                     , compute_decision_boundary:bool=False
+                     , fit_metric:str = 'acc'
+                     ) -> List[Abstract_Kernel]:
 
     kernel_list = _search(df=df
                           , target_variable=target_variable
@@ -204,6 +205,7 @@ def evaluate_kernels(df:pd.DataFrame
 
     kernel_list.sort(key=lambda x: x.kernel_quality, reverse=True)
 
+    #plot a scree of every kernel separately
     if plot_individual_kernels or export_individual_kernel_plots:
         for k in kernel_list:
             plotter.plot_kernel(df=df, kernel=k, target_variable=target_variable
@@ -212,16 +214,17 @@ def evaluate_kernels(df:pd.DataFrame
                         , to_file=export_individual_kernel_plots
                         , export_folder=export_folder)
 
-
-    if plot_ranking or (export_ranking and 'png' in export_formats):
+    #plot the full transformation ranking
+    if plot_ranking_all_transformations or (export_ranking and 'png' in export_formats):
         plotter.plot_ranking(kernel_list
-                     , to_screen=plot_ranking
+                     , to_screen=plot_ranking_all_transformations
                      , to_file=export_ranking
                      , export_folder=export_folder
                      , search_method=eval_method
                      , y_true=df[target_variable].values
                      )
 
+    #export the ranking to file
     if export_formats is not None and export_ranking:
         for f in export_formats:
             if f in ['csv', 'json']:
@@ -229,7 +232,6 @@ def evaluate_kernels(df:pd.DataFrame
 
 
     #compile best performances per feature(-pair)
-
     best_kernel_per_feature = {}
     for k in kernel_list:
         for kernel_feature in k.kernel_input_features:
@@ -240,12 +242,14 @@ def evaluate_kernels(df:pd.DataFrame
                 if k.kernel_quality > best_kernel_per_feature[kernel_feature].kernel_quality:
                     best_kernel_per_feature[kernel_feature] = k
 
-
-    if plot_ranking or export_ranking and 'png' in export_formats:
+    #plot the features in prioritized order
+    if plot_feature_ranking or export_ranking and 'png' in export_formats:
         plotter.plot_highlights(best_kernel_per_feature
                              , to_file=export_ranking
                              , export_folder=export_folder
-                             , to_screen=plot_ranking
+                             , to_screen=plot_feature_ranking
+                             , search_method=eval_method
+                             , y_true=df[target_variable].values
                              , suffix='- per feature')
 
     best_kernel_per_feature_combination_list = best_kernel_per_feature.values()

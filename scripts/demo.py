@@ -97,7 +97,8 @@ if __name__ == '__main__':
                      , monovariate_kernels=None
                      , duovariate_kernels=['poly3', 'rff_gauss']
                      , feature_standardizers=['raw']
-                     , plot_ranking=True
+                     , plot_feature_ranking=True
+                     , plot_ranking_all_transformations=True
                      , eval_method='normal'
                      , use_cupy='no'
                      )

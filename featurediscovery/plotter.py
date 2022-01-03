@@ -311,6 +311,8 @@ def plot_highlights(highlight_dict:Dict[str, Abstract_Kernel]
                  , to_file: bool = False
                  , export_folder: str = False
                  , suffix:str = ''
+                 , search_method:str = None
+                 , y_true:np.ndarray = None
                  ):
 
     if to_file and export_folder is None:
@@ -351,6 +353,13 @@ def plot_highlights(highlight_dict:Dict[str, Abstract_Kernel]
     ax.set_yticklabels(labels=y_tick_label, fontdict={'fontsize': 8})
     ax.set_xlabel('Performance')
     ax.set_title('Best Kernel Quality Per Feature'.format(suffix))
+
+    if search_method in ['naive', 'normal'] and y_true is not None:
+        class_prior_prob = max(len(y_true[y_true == 1.0]) / len(y_true),
+                               len(y_true[y_true == 0.0]) / len(y_true))
+
+        plt.axvline(class_prior_prob, color='red')
+
     plt.tight_layout()
 
     if to_file:

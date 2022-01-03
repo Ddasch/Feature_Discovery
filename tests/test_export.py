@@ -43,7 +43,7 @@ def test_to_screen_individual():
                                    , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=True
                                    )
 
@@ -88,7 +88,7 @@ def test_to_file_individual():
                                    , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=False
                                    , export_folder=export_folder
                                    , export_individual_kernel_plots=True
@@ -135,7 +135,7 @@ def test_to_screen_individual_tsne():
                                    , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='yes'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='tsne'
                                    )
@@ -177,7 +177,7 @@ def test_to_screen_individual_Duovariate_scree():
                                    , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=True
                                    , kernel_plot_mode='scree'
                                    )
@@ -220,7 +220,7 @@ def test_to_csv_performances():
                                    , feature_standardizers=['raw', 'centralized', 'standard']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=False
                                    , kernel_plot_mode='scree'
                                    , export_folder='./test_output/'
@@ -265,7 +265,7 @@ def test_to_json_performances():
                                    , feature_standardizers=['raw']
                                    , eval_method='full'
                                    , use_cupy='no'
-                                   , plot_ranking=False
+                                   , plot_feature_ranking=False
                                    , plot_individual_kernels=False
                                    , kernel_plot_mode='scree'
                                    , export_folder='./test_output/'

@@ -106,7 +106,7 @@ Running an extensive analysis can be slow when dealing with larger datasets. One
 and looking at the results the next day. But what if you want things to run faster, for instance by running it on the GPU?
 Well you can! The entire framework is optionally GPU accelerated thanks to <a href="https://github.com/cupy/cupy">CuPy</a>. 
 
-<div align="center"><img src="https://raw.githubusercontent.com/cupy/cupy/master/docs/image/cupy_logo_1000px.png" width="400"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/cupy/cupy/master/docs/image/cupy_logo_1000px.png" width="200"/></div>
 
 For this to work you need to have a CUDA capable GPU in your machine and the CUDA <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html">toolkit installed.</a>
 Installing Feature Discorvery should also install CuPy as a requirement. Then, all you need to do is set the 'use_cupy' parameter to "yes" when running the search.

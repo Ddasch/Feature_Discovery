@@ -76,7 +76,7 @@ meaning a kernel is only beneficial if the model can improve upon this class pro
 
 <div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="600"/></div>
 
-###### Optional parameters
+##### Optional parameters
 
 | Parameter | Allowed Values | Function |
 |-----------|----------------|----------|
@@ -92,7 +92,7 @@ meaning a kernel is only beneficial if the model can improve upon this class pro
 |use_cupy|str: 'yes', 'no', 'auto'|Indicate whether or not to use GPU acceleration. GPU acceleration is faster when analyzing larger datasets|
 --------
 
-###### Evaluation methods
+##### Evaluation methods
 Three approaches how the linear separability of the generated kernel features should be evaluated, as specified by the 'eval_method' parameter.
 These are
 - naive: Only generated features are measured for separability. Kernel input features and other raw features are ignored.
@@ -100,6 +100,20 @@ These are
 - full: Generated features together with kernel input featues and other raw features are measured for separability.
 Quality metric here changes to how much the added features improve upon the separability already present in the original dataset.
 
+# GPU Acceleration 
+
+Running an extensive analysis can be slow when dealing with larger datasets. One way to deal with this is by just enabling the export functions, running the search overnight
+and looking at the results the next day. But what if you want things to run faster, for instance by running it on the GPU?
+Well you can! The entire framework is optionally GPU accelerated thanks to <a href="https://github.com/cupy/cupy">CuPy</a>. 
+
+<div align="center"><img src="https://raw.githubusercontent.com/cupy/cupy/master/docs/image/cupy_logo_1000px.png" width="400"/></div>
+
+For this to work you need to have a CUDA capable GPU in your machine and the CUDA <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html">toolkit installed.</a>
+Installing Feature Discorvery should also install CuPy as a requirement. Then, all you need to do is set the 'use_cupy' parameter to "yes" when running the search.
+
+An important factor to note is that this feature isn't universally faster. Preliminary benchmarks have shown that the sample size of the dataset
+is the biggest determinant w.r.t choosing GPU over CPU. Based on a simple benchmark on a synthetic dataset I would recommend to only
+enable this feature once your dataset has at least 100k samples.  
 
 
 

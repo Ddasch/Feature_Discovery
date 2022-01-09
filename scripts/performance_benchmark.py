@@ -210,7 +210,7 @@ def benchmark_dim_scaling(n_test:int = 1):
 
     fig.savefig('./runtime_dim_scaling.png')
 
-    plt.show()
+    #plt.show()
 
 
 

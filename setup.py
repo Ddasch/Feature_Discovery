@@ -16,18 +16,25 @@ setup(
     url="https://github.com/Ddasch/Feature_Discovery",
     author="Frederik Schadd",
     author_email="featurediscovery@outlook.com",
-    license="MIT",
+    license="LGPL v2.1",
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.9",
+        "Environment :: GPU :: NVIDIA CUDA :: 11.5",
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Scientific/Engineering :: Mathematics"
     ],
     packages=["featurediscovery"],
     include_package_data=True,
     install_requires=[
         "pandas>=1.0.0"
         , 'scikit-learn>=1.0.0'
-        , 'cupy-cuda>=9.6.0'
+        , 'cupy-cuda115>=9.6.0'
         , 'matplotlib>=3.0.0'
         , 'scipy>=1.7.0'
       ],

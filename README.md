@@ -113,8 +113,10 @@ Installing Feature Discorvery should also install CuPy as a requirement. Then, a
 
 An important factor to note is that this feature isn't universally faster. Preliminary benchmarks have shown that the sample size of the dataset
 is the biggest determinant w.r.t choosing GPU over CPU. Based on a simple benchmark on a synthetic dataset I would recommend to only
-enable this feature once your dataset has at least 100k samples.  
+enable this feature once your dataset has at least 100k samples. 
 
+
+<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/runtime_sample_scaling.png?raw=true " width="400"/></div>
 
 
 [^1]: Some kernels like RBF don't do this explicitly and compute the instance similarities differently. For these an

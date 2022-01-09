@@ -74,7 +74,7 @@ was evaluated (which can be too much to plot depending on the amount of features
 which shows per feature only the best kernel transformation that was found. The red vertical line is the prior class probability,
 meaning a kernel is only beneficial if the model can improve upon this class probability. 
 
-<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="600"/></div>
+<div align="center"><img src="https://github.com/Ddasch/Feature_Discovery/blob/develop/docs/images/demo1_concat.png?raw=true " width="700"/></div>
 
 ##### Optional parameters
 

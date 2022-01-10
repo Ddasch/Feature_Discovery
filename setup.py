@@ -1,5 +1,5 @@
 import pathlib
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -29,7 +29,7 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Scientific/Engineering :: Mathematics"
     ],
-    packages=["featurediscovery"],
+    packages=find_packages(include=('featurediscovery*',)),
     include_package_data=True,
     install_requires=[
         "pandas>=1.0.0"

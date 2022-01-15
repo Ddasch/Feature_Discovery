@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="featurediscovery",
-    version="0.1.0",
+    version="0.1.1",
     description="Discover hidden predictive qualities of features in your dataset by testing them for linear separability after applying different kernel transformations.",
     long_description=README,
     long_description_content_type="text/markdown",

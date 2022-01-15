@@ -45,8 +45,16 @@ of the hidden potential of a feature.
 - Gaussian (RFF approximation)
  
 # Installation
+This library minimally requires 
+- pandas>=1.00
+- scipy>=1.7.0
+- scikit-learn>=1.0.0
+- matplotlib>=3.0.0
+- cupy-cuda115>=9.6.0
 
-TODO
+It is recommended to install cupy via conda beforehand. Afterwards you can install it via `pip` using:
+    
+    pip install featurediscovery
 
 # How to use
 
